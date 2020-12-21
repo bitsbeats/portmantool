@@ -5,10 +5,14 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/unistd.h>
+#include <sys/wait.h>
+#include <time.h>
 
 static unsigned int parse_interval_or_die(const char*, char**);
 
 static void make_output_dir(void);
+
+static pid_t run(char* const*);
 
 int main(int argc, char* argv[])
 {
@@ -25,9 +29,61 @@ int main(int argc, char* argv[])
 		interval += parse_interval_or_die(endptr, &endptr);
 	}
 
+	int num_nmap_args = argc - 2;
+	char** const nmap_argv = (char**) malloc(sizeof(char*) * (num_nmap_args+3));
+	if(!nmap_argv)
+	{
+		perror("malloc");
+		exit(EXIT_FAILURE);
+	}
+
+	int nmap_argc = 0;
+	nmap_argv[nmap_argc++] = argv[2];
+	nmap_argv[nmap_argc++] = "-oX";
+	nmap_argv[nmap_argc++] = "output.xml";
+	for(int i = 1; i < num_nmap_args; ++i)
+	{
+		nmap_argv[nmap_argc++] = argv[2+i];
+	}
+	nmap_argv[nmap_argc++] = NULL;
+
 	make_output_dir();
 
-	fprintf(stderr, "call %s every %u seconds\n", argv[2], interval);
+	char filename[33];
+	while(1)
+	{
+		pid_t pid = run(nmap_argv);
+		if(pid == -1)
+		{
+			sleep(1);
+			continue;
+		}
+
+		int wstatus;
+		if(waitpid(pid, &wstatus, 0) == -1) perror("waitpid");
+		if(!WIFEXITED(wstatus) || WEXITSTATUS(wstatus) != 0) continue;
+
+		time_t now = time(NULL);
+		if(now == ((time_t) -1))
+		{
+			perror("time");
+			continue;
+		}
+
+		struct tm tm;
+		if(localtime_r(&now, &tm) == NULL)
+		{
+			perror("localtime_r");
+			continue;
+		}
+
+		if(strftime(filename, sizeof(filename), "reports/scan-%Y%m%d-%H%M%S.xml", &tm) == 0) continue;
+		if(rename("output.xml", filename) == -1) perror("rename");
+
+		sleep(interval);
+	}
+
+	free(nmap_argv);
 	return 0;
 }
 
@@ -103,4 +159,23 @@ static void make_output_dir(void)
 		perror("mkdir");
 		exit(EXIT_FAILURE);
 	}
+}
+
+static pid_t run(char* const argv[])
+{
+	pid_t pid = fork();
+	if(pid == -1)
+	{
+		perror("fork");
+		return -1;
+	}
+
+	if(pid == 0)
+	{
+		execvp(argv[0], argv);
+		perror("execvp");
+		exit(EXIT_FAILURE);
+	}
+
+	return pid;
 }

@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=c11 -Wall -Werror
+CFLAGS = -std=c11 -Wall -Werror -D_XOPEN_SOURCE=700
 
 objects = runner.o
 

@@ -1,2 +1,4 @@
 runner
 *.o
+
+scanalyzer/scanalyzer

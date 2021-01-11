@@ -24,9 +24,13 @@ type Port struct {
 }
 
 type Host struct {
+	Address	Addr	`xml:"address"`
+	Ports	[]Port	`xml:"ports>port"`
+}
+
+type Run struct {
 	XMLName	xml.Name	`xml:"nmaprun"`
-	Address	Addr	`xml:"host>address"`
-	Ports	[]Port	`xml:"host>ports>port"`
+	Hosts	[]Host	`xml:"host"`
 }
 
 func main() {
@@ -36,7 +40,7 @@ func main() {
 	}
 
 	err = os.Mkdir(ArchiveDir, 0755)
-	if err != nil {
+	if err != nil && !os.IsExist(err) {
 		log.Fatal(err)
 	}
 
@@ -48,15 +52,15 @@ func main() {
 			continue
 		}
 
-		host := Host{}
-		err = xml.Unmarshal(data, &host)
+		run := Run{}
+		err = xml.Unmarshal(data, &run)
 		if err != nil {
 			log.Print(err)
 			continue
 		}
 
 		// TODO: Insert scan results into database
-		log.Print(host)
+		log.Print(run)
 
 		err = os.Rename(reportPath, path.Join(ArchiveDir, report.Name()))
 		if err != nil {

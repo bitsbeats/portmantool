@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"time"
 )
 
 const (
@@ -45,6 +46,8 @@ func main() {
 	}
 
 	for _, report := range reports {
+		log.Printf("Processing %s", report.Name())
+
 		reportPath := path.Join(ReportsDir, report.Name())
 		data, err := ioutil.ReadFile(reportPath)
 		if err != nil {
@@ -65,6 +68,11 @@ func main() {
 		err = os.Rename(reportPath, path.Join(ArchiveDir, report.Name()))
 		if err != nil {
 			log.Print(err)
+			continue
 		}
+
+		log.Print("done")
 	}
+
+	time.Sleep(3 * time.Second)
 }

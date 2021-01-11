@@ -1,0 +1,11 @@
+---
+
+services:
+  scanalyzer:
+    build: scanalyzer
+    restart: unless-stopped
+    volumes:
+      - scan-data:/scan
+
+volumes:
+  scan-data:

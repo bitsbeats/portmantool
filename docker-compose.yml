@@ -1,6 +1,16 @@
 ---
 
 services:
+  database:
+    image: postgres:alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: 23BassSword42
+    ports:
+      - 127.0.0.1:5432:5432
+    volumes:
+      - ./types.sql:/docker-entrypoint-initdb.d/types.sql:ro
+
   scanalyzer:
     build: scanalyzer
     restart: unless-stopped

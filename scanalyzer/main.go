@@ -40,6 +40,9 @@ type Run struct {
 }
 
 func main() {
+	db := InitDatabase()
+	db.AutoMigrate(&ActualState{}, &ExpectedState{}, &Scan{})
+
 	reports, err := ioutil.ReadDir(ReportsDir)
 	if err != nil {
 		log.Fatal(err)

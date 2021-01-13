@@ -19,9 +19,14 @@ type Addr struct {
 	Type	string	`xml:"addrtype,attr"`
 }
 
+type State struct {
+	State	string	`xml:"state,attr"`
+}
+
 type Port struct {
 	Id	uint16	`xml:"portid,attr"`
 	Proto	string	`xml:"protocol,attr"`
+	State	State	`xml:"state"`
 }
 
 type Host struct {

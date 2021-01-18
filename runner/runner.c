@@ -4,12 +4,12 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/unistd.h>
 #include <sys/wait.h>
 #include <time.h>
+#include <unistd.h>
 
 static const char OUTPUT_DIR[] = "./reports";
-static const char OUTPUT_FILE[] = "output.xml";
+static char OUTPUT_FILE[] = "output.xml";
 
 static unsigned int parse_interval_or_die(const char*, char**);
 

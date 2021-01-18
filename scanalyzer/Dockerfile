@@ -11,4 +11,4 @@ COPY --from=builder /go/bin/scanalyzer /usr/local/bin/
 VOLUME /scan
 
 WORKDIR /scan
-CMD ["/bin/sh", "-c", "while /usr/local/bin/scanalyzer; do /bin/true; done"]
+CMD ["/bin/sh", "-c", "while /bin/true; do /usr/local/bin/scanalyzer; done"]

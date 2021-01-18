@@ -8,6 +8,9 @@
 #include <sys/wait.h>
 #include <time.h>
 
+static const char OUTPUT_DIR[] = "./reports";
+static const char OUTPUT_FILE[] = "output.xml";
+
 static unsigned int parse_interval_or_die(const char*, char**);
 
 static void make_output_dir(void);
@@ -40,7 +43,7 @@ int main(int argc, char* argv[])
 	int nmap_argc = 0;
 	nmap_argv[nmap_argc++] = argv[2];
 	nmap_argv[nmap_argc++] = "-oX";
-	nmap_argv[nmap_argc++] = "output.xml";
+	nmap_argv[nmap_argc++] = OUTPUT_FILE;
 	for(int i = 1; i < num_nmap_args; ++i)
 	{
 		nmap_argv[nmap_argc++] = argv[2+i];
@@ -78,7 +81,7 @@ int main(int argc, char* argv[])
 		}
 
 		if(strftime(filename, sizeof(filename), "reports/scan-%Y%m%d-%H%M%S.xml", &tm) == 0) continue;
-		if(rename("output.xml", filename) == -1) perror("rename");
+		if(rename(OUTPUT_FILE, filename) == -1) perror("rename");
 
 		sleep(interval);
 	}
@@ -134,8 +137,6 @@ static unsigned int parse_interval_or_die(const char* nptr, char** endptr)
 
 static void make_output_dir(void)
 {
-	const char OUTPUT_DIR[] = "./reports";
-
 	struct stat statbuf;
 	if(stat(OUTPUT_DIR, &statbuf) == 0)
 	{

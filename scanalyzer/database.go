@@ -18,9 +18,9 @@ type Target struct {
 
 type ActualState struct {
 	Target
-	State	string	`gorm:"type:state;not null"`
-	ScanID	int32	`gorm:"primaryKey;autoIncrement:false"`
-	Scan	Scan	`gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	State	string		`gorm:"type:state;not null"`
+	ScanID	time.Time	`gorm:"primaryKey"`
+	Scan	Scan		`gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type ExpectedState struct {
@@ -30,8 +30,7 @@ type ExpectedState struct {
 }
 
 type Scan struct {
-	ID		int32
-	Timestamp	time.Time	`gorm:"not null"`
+	ID		time.Time
 }
 
 func InitDatabase() *gorm.DB {

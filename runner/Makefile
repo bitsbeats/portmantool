@@ -10,6 +10,9 @@ all: runner
 clean:
 	rm -f runner runner.o
 
+install:
+	install -m755 runner /usr/local/bin/runner
+
 runner: $(objects)
 	$(CC) $(CFLAGS) -o $@ $(objects)
 

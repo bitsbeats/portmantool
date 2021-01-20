@@ -1,3 +1,6 @@
 *.o
 runner/runner
 scanalyzer/scanalyzer
+
+test/scan/*
+!test/scan/.gitkeep

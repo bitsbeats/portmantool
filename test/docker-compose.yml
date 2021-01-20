@@ -1,0 +1,25 @@
+---
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+
+  postgres:
+    image: postgres:alpine
+    environment:
+      POSTGRES_PASSWORD: p0stgr3s
+
+  redis:
+    image: redis:alpine
+
+  rabbitmq:
+    image: rabbitmq:alpine
+
+  php:
+    image: php:fpm-alpine
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 10.23.42.0/24

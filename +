@@ -1,0 +1,105 @@
+#!/bin/bash
+
+if [ "$0" = "$SHELL" ]
+then
+	if [ -z "$(which '+' 2>/dev/null)" ]
+	then
+		if [ -z "$(find "$PWD" -name '+')" ]
+		then
+			echo "source this script from within its parent directory to add it to PATH" >&2
+		else
+			PATH="$PWD:$PATH"
+			echo "added $PWD to path" >&2
+		fi
+	fi
+	return
+fi
+
+set -e
+
+if [ $# -eq 0 ]
+then
+	cat >&2 <<EOF
+usage: $0 [COMMAND...]
+
+supported commands:
+  edit
+  enter-db
+  run-runner
+  run-scanalyzer
+  start-db
+  start-scanalyzer
+  start-services
+  stop
+  stop-services
+EOF
+
+	exit 0
+fi
+
+SELF_DIR="$(dirname "$0")"
+TEST_DIR="$SELF_DIR/test"
+SCAN_DIR="$TEST_DIR/scan"
+
+TEST_COMPOSE_NAME=portmantool_test
+
+COMPOSE_FILE="$SELF_DIR/${COMPOSE_FILE:-docker-compose.test.yml}"
+DB_NAME="${DB_NAME:-postgres}"
+DB_USER="${DB_USER:-postgres}"
+NMAP_PATH="${NMAP_PATH:-$(which nmap)}"
+SCAN_INTERVAL="${SCAN_INTERVAL:-10s}"
+
+export DB_PASSWORD="${DB_PASSWORD:-23BassSword42}"
+
+err() {
+	echo "$1" >&2
+	exit 1
+}
+
+while [ $# -ne 0 ]
+do
+	case "$1" in
+		edit)
+			"${EDITOR:-ed}" "$SELF_DIR/+"
+			shift 1
+			[ $# -ne 0 ] && echo "ignoring remaining commands after edit: $*" >&2
+			exit 0
+			;;
+		enter-db)
+			sudo docker-compose -f "$COMPOSE_FILE" exec database psql "$DB_NAME" "$DB_USER"
+			;;
+		run-runner)
+			pushd "$SCAN_DIR" || err "could not enter $SCAN_DIR"
+			"$SELF_DIR/runner/runner" "$SCAN_INTERVAL" "$NMAP_PATH" '10.23.42.0/24'
+			popd || err "could not leave $SCAN_DIR"
+			;;
+		run-scanalyzer)
+			pushd "$SCAN_DIR" || err "could not enter $SCAN_DIR"
+			"$SELF_DIR/scanalyzer/scanalyzer"
+			popd || err "could not leave $SCAN_DIR"
+			;;
+		start-db)
+			sudo docker-compose -f "$COMPOSE_FILE" up -d database
+			;;
+		start-scanalyzer)
+			sudo docker-compose -f "$COMPOSE_FILE" up -d scanalyzer
+			;;
+		start-services)
+			pushd "$TEST_DIR" || err "could not enter $TEST_DIR"
+			sudo docker-compose -p "$TEST_COMPOSE_NAME" up -d
+			popd || err "could not leave $TEST_DIR"
+			;;
+		stop)
+			sudo docker-compose -f "$COMPOSE_FILE" down
+			;;
+		stop-services)
+			pushd "$TEST_DIR" || err "could not enter $TEST_DIR"
+			sudo docker-compose -p "$TEST_COMPOSE_NAME" down
+			popd || err "could not leave $TEST_DIR"
+			;;
+		*)
+			echo "ignoring unrecognized command \"$1\"" >&2
+			;;
+	esac
+	shift 1
+done

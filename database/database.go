@@ -33,7 +33,7 @@ type Scan struct {
 	Ports	[]ActualState	`gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
-func InitDatabase() *gorm.DB {
+func InitDatabase(migrate bool) *gorm.DB {
 	password, ok := os.LookupEnv("DB_PASSWORD")
 	if !ok {
 		log.Fatal("DB_PASSWORD is not set")
@@ -60,9 +60,11 @@ func InitDatabase() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	err = db.AutoMigrate(&Scan{}, &ActualState{}, &ExpectedState{})
-	if err != nil {
-		log.Fatal(err)
+	if migrate {
+		err = db.AutoMigrate(&Scan{}, &ActualState{}, &ExpectedState{})
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	return db

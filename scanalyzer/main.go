@@ -17,7 +17,7 @@ const (
 )
 
 func main() {
-	db := database.InitDatabase()
+	db := database.InitDatabase(true)
 
 	reports, err := ioutil.ReadDir(ReportsDir)
 	if err != nil {

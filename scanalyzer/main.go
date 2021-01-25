@@ -14,34 +14,8 @@ const (
 	ReportsDir = "reports"
 )
 
-type Addr struct {
-	Address	string	`xml:"addr,attr"`
-	Type	string	`xml:"addrtype,attr"`
-}
-
-type State struct {
-	State	string	`xml:"state,attr"`
-}
-
-type Port struct {
-	Id	uint16	`xml:"portid,attr"`
-	Proto	string	`xml:"protocol,attr"`
-	State	State	`xml:"state"`
-}
-
-type Host struct {
-	Address	Addr	`xml:"address"`
-	Ports	[]Port	`xml:"ports>port"`
-}
-
-type Run struct {
-	XMLName	xml.Name	`xml:"nmaprun"`
-	Hosts	[]Host	`xml:"host"`
-}
-
 func main() {
 	db := InitDatabase()
-	db.AutoMigrate(&ActualState{}, &ExpectedState{}, &Scan{})
 
 	reports, err := ioutil.ReadDir(ReportsDir)
 	if err != nil {

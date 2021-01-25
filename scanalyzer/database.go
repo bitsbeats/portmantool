@@ -20,7 +20,6 @@ type ActualState struct {
 	Target
 	State	string		`gorm:"type:state;not null"`
 	ScanID	time.Time	`gorm:"primaryKey"`
-	Scan	Scan		`gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type ExpectedState struct {
@@ -30,7 +29,8 @@ type ExpectedState struct {
 }
 
 type Scan struct {
-	ID		time.Time
+	ID	time.Time
+	Ports	[]ActualState	`gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func InitDatabase() *gorm.DB {
@@ -56,6 +56,11 @@ func InitDatabase() *gorm.DB {
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s", host, user, password, name)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = db.AutoMigrate(&Scan{}, &ActualState{}, &ExpectedState{})
 	if err != nil {
 		log.Fatal(err)
 	}

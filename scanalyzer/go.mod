@@ -2,7 +2,6 @@ module github.com/bitsbeats/portmantool/scanalyzer
 
 go 1.15
 
-require (
-	gorm.io/driver/postgres v1.0.6
-	gorm.io/gorm v1.20.11
-)
+replace github.com/bitsbeats/portmantool/database => ../database
+
+require github.com/bitsbeats/portmantool/database v0.0.0-00010101000000-000000000000

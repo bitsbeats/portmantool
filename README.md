@@ -36,6 +36,7 @@ alerting.
 | /expected                      | PATCH  | Update expected state                                                                                              |
 | /run                           | POST   | Run all scanners immediately                                                                                       |
 | /scans                         | GET    | Get list of scan timestamps                                                                                        |
+| /scans[/{keep}]                | DELETE | Delete entries that do not contribute to the current state and, optionally, are older than {keep}                  |
 | /scan/{id}                     | GET    | Get result of scan at timestamp {id}                                                                               |
 |                                |        |                                                                                                                    |
 

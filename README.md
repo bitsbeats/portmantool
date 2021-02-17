@@ -7,13 +7,13 @@ Port scanning and alerting tool
 ### runner
 
 ```
-<program name tbd> <interval>['s'|'m'|'h'|'d'] <nmap executable> [nmap arg...]
+while true
+do
+	run.sh <nmap args...> &
+	sleep <scan interval>
+	wait $!
+done
 ```
-
-Run one process that starts `nmap` and another one that sleeps for `interval`
-_s_econds/_m_inutes/_h_ours/_d_ays. Then wait for `nmap` to terminate, move the
-generated report to a directory shared with the next component and, finally,
-wait for the sleeping process. Repeat.
 
 ### scanalyzer & api server
 

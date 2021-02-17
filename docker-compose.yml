@@ -12,11 +12,8 @@ services:
   runner:
     build: runner
     restart: unless-stopped
-    command:
-      - /usr/local/bin/runner
-      - 30s
-      - /usr/bin/nmap
-      - 127.0.0.1/32
+#   command:
+#     - 127.0.0.1/32
     volumes:
       - scan-data:/scan
 

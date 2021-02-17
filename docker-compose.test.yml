@@ -11,7 +11,7 @@ services:
     volumes:
       - ./types.sql:/docker-entrypoint-initdb.d/types.sql:ro
 
-  # run `runner/runner 10s nmap 10.23.42.0/24` in ./test/scan
+  # run `while true; do ../../runner/run.sh 10.23.42.0/24 & sleep 10s; wait $!; done` in ./test/scan
 
   scanalyzer:
     build: scanalyzer

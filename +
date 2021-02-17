@@ -70,7 +70,12 @@ do
 			;;
 		run-runner)
 			pushd "$SCAN_DIR" || err "could not enter $SCAN_DIR"
-			"$SELF_DIR/runner/runner" "$SCAN_INTERVAL" "$NMAP_PATH" -p 80,4369,5432,5671-5672,6379,9000,15691-15692,25672 '10.23.42.0/24'
+			while true
+			do
+				"$SELF_DIR/runner/run.sh" -p 80,4369,5432,5671-5672,6379,9000,15691-15692,25672 '10.23.42.0/24' &
+				sleep "$SCAN_INTERVAL"
+				wait "$!"
+			done
 			popd || err "could not leave $SCAN_DIR"
 			;;
 		run-scanalyzer)

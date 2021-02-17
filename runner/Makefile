@@ -1,20 +1,19 @@
 CC = gcc
 CFLAGS = -std=c11 -Wall -Werror -D_XOPEN_SOURCE=700
 
-objects = runner.o
+.PHONY: all clean install
 
-.PHONY: all clean
-
-all: runner
+all: rn run.sh
 
 clean:
-	rm -f runner runner.o
+	rm -f rn rn.o
 
-install:
-	install -m755 runner /usr/local/bin/runner
+install: all
+	install -m755 rn /usr/local/bin/rn
+	install -m755 run.sh /usr/local/bin/run.sh
 
-runner: $(objects)
-	$(CC) $(CFLAGS) -o $@ $(objects)
+rn: rn.o
+	$(CC) $(CFLAGS) -o $@ rn.o
 
 %.o: %.c
 	$(CC) $(CFLAGS) -o $@ -c $<

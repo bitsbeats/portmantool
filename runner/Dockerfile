@@ -17,7 +17,10 @@ RUN set -e; \
 	rm -r /build; \
 	apk del --no-network .build-deps
 
-VOLUME /scan
+ENV SCAN_INTERVAL=30s
 
+VOLUME /scan
 WORKDIR /scan
-CMD ["/usr/local/bin/runner", "30s", "nmap", "127.0.0.1/32"]
+
+ENTRYPOINT ["/bin/sh", "-c", "while true; do run.sh \"$@\" & sleep $SCAN_INTERVAL; wait $!; done", "loop"]
+CMD ["127.0.0.1/32"]

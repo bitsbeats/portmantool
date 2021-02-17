@@ -1,5 +1,5 @@
 *.o
-runner/runner
+runner/rn
 scanalyzer/scanalyzer
 
 test/scan/*

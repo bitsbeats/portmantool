@@ -2,6 +2,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -14,6 +15,8 @@ static char OUTPUT_FILE[] = "output.xml";
 static void die(const char*);
 
 static unsigned int parse_interval_or_die(const char*, char**);
+
+static void populate_nmap_args(char**, char* const*, int);
 
 static void make_output_dir(void);
 
@@ -34,19 +37,19 @@ int main(int argc, char* argv[])
 		interval += parse_interval_or_die(endptr, &endptr);
 	}
 
-	int num_nmap_args = argc - 2;
+	int test = strcmp("test", argv[2]) == 0;
+
+	int num_nmap_args = test ? 0 : argc - 2;
 	char** const nmap_argv = (char**) malloc(sizeof(char*) * (num_nmap_args+3));
 	if(!nmap_argv) die("malloc");
 
-	int nmap_argc = 0;
-	nmap_argv[nmap_argc++] = argv[2];
-	nmap_argv[nmap_argc++] = "-oX";
-	nmap_argv[nmap_argc++] = OUTPUT_FILE;
-	for(int i = 1; i < num_nmap_args; ++i)
+	if(test)
 	{
-		nmap_argv[nmap_argc++] = argv[2+i];
+		nmap_argv[0] = "sleep";
+		nmap_argv[1] = "5";
+		nmap_argv[2] = NULL;
 	}
-	nmap_argv[nmap_argc++] = NULL;
+	else populate_nmap_args(nmap_argv, argv, num_nmap_args);
 
 	make_output_dir();
 
@@ -61,8 +64,14 @@ int main(int argc, char* argv[])
 		}
 
 		int wstatus;
-		if(waitpid(pid, &wstatus, 0) == -1) perror("waitpid");
+		if(waitpid(pid, &wstatus, 0) == -1)
+		{
+			perror("waitpid");
+			continue;
+		}
 		if(!WIFEXITED(wstatus) || WEXITSTATUS(wstatus) != 0) continue;
+
+		if(test) fputc('.', stderr);
 
 		time_t now = time(NULL);
 		if(now == ((time_t) -1))
@@ -83,6 +92,7 @@ int main(int argc, char* argv[])
 
 		sleep(interval);
 	}
+	if(test) fputc('\n', stderr);
 
 	free(nmap_argv);
 	return 0;
@@ -133,6 +143,19 @@ static unsigned int parse_interval_or_die(const char* nptr, char** endptr)
 	if(**endptr != '\0') ++*endptr;
 
 	return (unsigned int) l;
+}
+
+static void populate_nmap_args(char** nmap_argv, char* const* argv, int num_nmap_args)
+{
+	int nmap_argc = 0;
+	nmap_argv[nmap_argc++] = argv[2];
+	nmap_argv[nmap_argc++] = "-oX";
+	nmap_argv[nmap_argc++] = OUTPUT_FILE;
+	for(int i = 1; i < num_nmap_args; ++i)
+	{
+		nmap_argv[nmap_argc++] = argv[2+i];
+	}
+	nmap_argv[nmap_argc++] = NULL;
 }
 
 static void make_output_dir(void)

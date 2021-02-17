@@ -11,6 +11,8 @@
 static const char OUTPUT_DIR[] = "./reports";
 static char OUTPUT_FILE[] = "output.xml";
 
+static void die(const char*);
+
 static unsigned int parse_interval_or_die(const char*, char**);
 
 static void make_output_dir(void);
@@ -34,11 +36,7 @@ int main(int argc, char* argv[])
 
 	int num_nmap_args = argc - 2;
 	char** const nmap_argv = (char**) malloc(sizeof(char*) * (num_nmap_args+3));
-	if(!nmap_argv)
-	{
-		perror("malloc");
-		exit(EXIT_FAILURE);
-	}
+	if(!nmap_argv) die("malloc");
 
 	int nmap_argc = 0;
 	nmap_argv[nmap_argc++] = argv[2];
@@ -90,15 +88,17 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
+static void die(const char* s)
+{
+	perror(s);
+	exit(EXIT_FAILURE);
+}
+
 static unsigned int parse_interval_or_die(const char* nptr, char** endptr)
 {
 	errno = 0;
 	long l = strtol(nptr, endptr, 10);
-	if(errno)
-	{
-		perror("strtol");
-		exit(EXIT_FAILURE);
-	}
+	if(errno) die("strtol");
 
 	if(*nptr != '\0' && *endptr == nptr)
 	{
@@ -151,15 +151,10 @@ static void make_output_dir(void)
 	case ENOENT:
 		break;
 	default:
-		perror("stat");
-		exit(EXIT_FAILURE);
+		die("stat");
 	}
 
-	if(mkdir(OUTPUT_DIR, 0755) == -1)
-	{
-		perror("mkdir");
-		exit(EXIT_FAILURE);
-	}
+	if(mkdir(OUTPUT_DIR, 0755) == -1) die("mkdir");
 }
 
 static pid_t run(char* const argv[])
@@ -174,8 +169,7 @@ static pid_t run(char* const argv[])
 	if(pid == 0)
 	{
 		execvp(argv[0], argv);
-		perror("execvp");
-		exit(EXIT_FAILURE);
+		die("execvp");
 	}
 
 	return pid;

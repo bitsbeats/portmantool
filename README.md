@@ -1,6 +1,6 @@
 # portmantool
 
-Port scanning and alerting tool
+Port scanning and monitoring tool
 
 ## Components
 
@@ -15,9 +15,7 @@ do
 done
 ```
 
-### scanalyzer & api server
-
-Previously planned as separate components
+### scanalyzer
 
 This program imports the scan reports from the shared directory into a database
 and, if it has been successful, archives them.

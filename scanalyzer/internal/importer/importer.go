@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/bitsbeats/portmantool/scanalyzer/internal/database"
-//	"github.com/bitsbeats/portmantool/scanalyzer/internal/metrics"
+	"github.com/bitsbeats/portmantool/scanalyzer/internal/metrics"
 
 	"gorm.io/gorm"
 )
@@ -28,68 +28,6 @@ type (
 
 func NewImporter(db *gorm.DB) Importer {
 	return Importer{db}
-}
-
-func (i Importer) importScans() {
-	reports, err := ioutil.ReadDir(ReportsDir)
-	if err != nil {
-		log.Print(err)
-		return
-	}
-
-	db := i.conn
-	for _, report := range reports {
-		log.Printf("Processing %s", report.Name())
-
-		reportPath := path.Join(ReportsDir, report.Name())
-		data, err := ioutil.ReadFile(reportPath)
-		if err != nil {
-			log.Print(err)
-			continue
-		}
-
-		run := Run{}
-		err = xml.Unmarshal(data, &run)
-		if err != nil {
-			log.Print(err)
-			continue
-		}
-
-		log.Print(run)
-
-//		rows, err := db.Model(&database.ActualState{}).Select("address, port, protocol, state").Joins("JOIN (?) ON address = a AND port = p AND protocol = proto AND scan_id = max_scan_id", db.Model(&database.ActualState{}).Select("address a, port p, protocol proto, max(scan_id) max_scan_id").Group("address, port, protocol")).Rows()
-//		if err != nil {
-//			log.Print(err)
-//			continue
-//		}
-
-		scan := database.Scan{ID: time.Unix(run.Start, 0)}
-		result := db.Create(&scan)
-		if result.Error != nil {
-			log.Print(result.Error)
-			continue
-		}
-
-		// TODO: Needs optimization
-		for _, host := range run.Hosts {
-			for _, port := range host.Ports {
-				state := database.ActualState{Target: database.Target{Address: host.Address.Address, Port: port.Id, Protocol: port.Proto}, State: port.State.State, ScanID: scan.ID}
-				result = db.Create(&state)
-				if result.Error != nil {
-					log.Print(result.Error)
-					continue
-				}
-			}
-		}
-
-		err = os.Rename(reportPath, path.Join(ArchiveDir, report.Name()))
-		if err != nil {
-			log.Print(err)
-			continue
-		}
-
-		log.Print("done")
-	}
 }
 
 func (i Importer) Run(ctx context.Context) error {
@@ -112,4 +50,84 @@ func (i Importer) Run(ctx context.Context) error {
 	}()
 
 	return nil
+}
+
+func (i Importer) importScans() {
+	reports, err := ioutil.ReadDir(ReportsDir)
+	if err != nil {
+		log.Print(err)
+		return
+	}
+
+	for _, report := range reports {
+		i.process(report.Name())
+	}
+}
+
+func (i Importer) process(report string) {
+	log.Printf("Processing %s", report)
+
+	reportPath := path.Join(ReportsDir, report)
+	data, err := ioutil.ReadFile(reportPath)
+	if err != nil {
+		log.Print(err)
+		metrics.FailedImports.Inc()
+		return
+	}
+
+	run := Run{}
+	err = xml.Unmarshal(data, &run)
+	if err != nil {
+		log.Print(err)
+		metrics.FailedImports.Inc()
+		return
+	}
+
+	log.Print(run)
+
+	err = i.conn.Transaction(func(tx *gorm.DB) error {
+//		rows, err := tx.Model(&database.ActualState{}).Select("address, port, protocol, state").Joins("JOIN (?) ON address = a AND port = p AND protocol = proto AND scan_id = max_scan_id", tx.Model(&database.ActualState{}).Select("address a, port p, protocol proto, max(scan_id) max_scan_id").Group("address, port, protocol")).Rows()
+//		if err != nil {
+//			return err
+//		}
+
+		scan := database.Scan{ID: time.Unix(run.Start, 0)}
+		err := tx.Create(&scan).Error
+		if err != nil {
+			return err
+		}
+
+		state := make([]database.ActualState, 0, 64)
+		for _, host := range run.Hosts {
+			for _, port := range host.Ports {
+				state = append(state, database.ActualState{
+					Target: database.Target{
+						Address: host.Address.Address,
+						Port: port.Id,
+						Protocol: port.Proto,
+					},
+					State: port.State.State,
+					ScanID: scan.ID,
+				})
+			}
+		}
+		err = tx.Create(&state).Error
+		if err != nil {
+			return err
+		}
+
+		err = os.Rename(reportPath, path.Join(ArchiveDir, report))
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+	if err != nil {
+		log.Print(err)
+		metrics.FailedImports.Inc()
+		return
+	}
+
+	log.Print("done")
 }

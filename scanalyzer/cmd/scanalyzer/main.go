@@ -13,7 +13,7 @@ import (
 func main() {
 	env := getEnv()
 
-	db, err := database.Connect(env.DbHost, env.DbUser, env.DbPassword, env.DbName, true)
+	db, err := database.Connect(env.DbHost, env.DbUser, env.DbPassword, env.DbName)
 	if err != nil {
 		log.Fatal(err)
 	}

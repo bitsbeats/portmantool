@@ -1,8 +1,8 @@
-FROM alpine:3.12
+FROM alpine:3.14
+
+ENV SCAN_INTERVAL=30s
 
 COPY . /build
-
-RUN apk add --no-cache nmap
 
 RUN set -e; \
 	apk add --no-cache --virtual .build-deps \
@@ -17,7 +17,9 @@ RUN set -e; \
 	rm -r /build; \
 	apk del --no-network .build-deps
 
-ENV SCAN_INTERVAL=30s
+RUN apk add --no-cache nmap
+
+RUN mkdir -p /scan && chown nobody:nobody /scan
 
 VOLUME /scan
 WORKDIR /scan

@@ -1,14 +1,19 @@
-FROM golang:1.15 AS builder
+FROM golang:1.17 AS builder
 
 COPY . src/scanalyzer/
-RUN cd bin && go build scanalyzer
+RUN cd src/scanalyzer && go build -o ../../bin/scanalyzer ./cmd/scanalyzer
 
 
-FROM alpine:3.12
+FROM alpine:3.14
 
 COPY --from=builder /go/bin/scanalyzer /usr/local/bin/
 
-VOLUME /scan
+RUN mkdir -p /scan && chown nobody:nobody /scan
 
+EXPOSE 4280
+
+USER nobody
+VOLUME /scan
 WORKDIR /scan
-CMD ["/bin/sh", "-c", "while /bin/true; do /usr/local/bin/scanalyzer; done"]
+
+CMD ["/usr/local/bin/scanalyzer"]

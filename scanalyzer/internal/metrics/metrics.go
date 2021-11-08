@@ -1,7 +1,11 @@
 package metrics
 
 import (
+	"github.com/bitsbeats/portmantool/scanalyzer/internal/database"
+
 	"github.com/prometheus/client_golang/prometheus"
+
+	"gorm.io/gorm"
 )
 
 var (
@@ -35,6 +39,20 @@ func RegisterMetrics() error {
 		if err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func UpdateFromDatabase(db *gorm.DB) error {
+	state, err := database.CurrentState(db)
+	if err != nil {
+		return err
+	}
+
+	Ports.Reset()
+	for _, s := range state {
+		Ports.WithLabelValues(s.Address, s.Protocol, s.State).Inc()
 	}
 
 	return nil

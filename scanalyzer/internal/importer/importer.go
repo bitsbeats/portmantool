@@ -60,14 +60,28 @@ func (i Importer) importScans() {
 	}
 
 	for _, report := range reports {
-		i.process(report.Name())
+		reportPath := path.Join(ReportsDir, report.Name())
+
+		i.process(report.Name(), reportPath)
+
+		_, err = os.Stat(reportPath)
+		if err == nil {
+			err = os.Rename(reportPath, path.Join(ArchiveDir, report.Name()))
+		}
+		if err != nil && !os.IsNotExist(err) {
+			log.Print(err)
+		}
+	}
+
+	err = metrics.UpdateFromDatabase(i.conn)
+	if err != nil {
+		log.Print(err)
 	}
 }
 
-func (i Importer) process(report string) {
+func (i Importer) process(report, reportPath string) {
 	log.Printf("Processing %s", report)
 
-	reportPath := path.Join(ReportsDir, report)
 	data, err := ioutil.ReadFile(reportPath)
 	if err != nil {
 		log.Print(err)

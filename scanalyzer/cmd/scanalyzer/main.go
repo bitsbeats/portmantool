@@ -23,6 +23,11 @@ func main() {
 		log.Fatal(err)
 	}
 
+	err = metrics.UpdateFromDatabase(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 

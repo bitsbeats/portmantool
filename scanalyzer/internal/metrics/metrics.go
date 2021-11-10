@@ -2,7 +2,6 @@ package metrics
 
 import (
 	"github.com/bitsbeats/portmantool/scanalyzer/internal/database"
-
 	"github.com/prometheus/client_golang/prometheus"
 
 	"gorm.io/gorm"

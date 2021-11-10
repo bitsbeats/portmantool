@@ -43,6 +43,15 @@ func DiffExpected(db *gorm.DB) (diff []Diff, err error) {
 	return diff, nil
 }
 
+func Expected(db *gorm.DB) (state []ExpectedState, err error) {
+	err = db.Model(&ExpectedState{}).Find(&state).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return state, nil
+}
+
 func Scans(db *gorm.DB) (scans []Scan, err error) {
 	err = db.Model(&Scan{}).Find(&scans).Error
 	if err != nil {

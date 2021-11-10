@@ -68,7 +68,13 @@ func (server Server) diffTwo(w http.ResponseWriter, r *http.Request) {
 func (server Server) expected(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		w.WriteHeader(501)
+		expectedState, err := database.Expected(server.db)
+		if err != nil {
+			serverError(w, r, err)
+			return
+		}
+
+		toJSON(w, r, expectedState)
 	case "PATCH":
 		w.WriteHeader(501)
 	default:

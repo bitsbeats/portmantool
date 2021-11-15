@@ -14,6 +14,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type Server struct {
@@ -76,7 +77,33 @@ func (server Server) expected(w http.ResponseWriter, r *http.Request) {
 
 		toJSON(w, r, expectedState)
 	case "PATCH":
-		w.WriteHeader(501)
+		if r.Header.Get("Content-Type") != "application/json" {
+			clientError(w, r, "data must be sent as json")
+			return
+		}
+
+		data, err := io.ReadAll(r.Body)
+		if err != nil {
+			serverError(w, r, err)
+			return
+		}
+
+		var expectedState []database.ExpectedState
+		err = json.Unmarshal(data, &expectedState)
+		if err != nil {
+			clientError(w, r, err)
+			return
+		}
+
+		err = server.db.Clauses(clause.OnConflict{
+			UpdateAll: true,
+		}).Create(&expectedState).Error
+		if err != nil {
+			serverError(w, r, err)
+			return
+		}
+
+		w.WriteHeader(204)
 	default:
 		w.WriteHeader(405)
 	}

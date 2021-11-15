@@ -9,7 +9,7 @@ import (
 
 var (
 	FailedImports = prometheus.NewCounter(prometheus.CounterOpts{
-		Name: "portmantool_imports_failed",
+		Name: "portmantool_imports_failed_total",
 		Help: "Total number of failed imports",
 	})
 

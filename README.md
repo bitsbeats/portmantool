@@ -45,7 +45,7 @@ alerting.
 | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | portmantool_ports                        | Number of unique host/protocol/port combinations in database (labels: host, protocol, state)                      |
 | portmantool_ports_rogue                  | Number of ports with a state different from the expected (labels: host, protocol)                                 |
-| portmantool_imports_failed               | Total number of failed imports                                                                                    |
+| portmantool_imports_failed_total         | Total number of failed imports                                                                                    |
 | portmantool_                             |                                                                                                                   |
 
 ##### Labels

@@ -26,17 +26,20 @@ func NewServer(db *gorm.DB) Server {
 }
 
 func (server Server) Serve(listen string) error {
-	http.Handle("/", http.NotFoundHandler())
-	http.HandleFunc("/diff", server.diffExpected)
-	http.HandleFunc("/diff/", server.diffTwo)
-	http.HandleFunc("/expected", server.expected)
-	http.HandleFunc("/hello", server.hello)
-	http.HandleFunc("/run", server.run)
-	http.HandleFunc("/run/", server.run)
-	http.HandleFunc("/scans", server.getScans)
-	http.HandleFunc("/scans/", server.deleteScans)
-	http.HandleFunc("/scan", badRequest("id required"))
-	http.HandleFunc("/scan/", server.scan)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/diff", server.diffExpected)
+	mux.HandleFunc("/diff/", server.diffTwo)
+	mux.HandleFunc("/expected", server.expected)
+	mux.HandleFunc("/hello", server.hello)
+	mux.HandleFunc("/run", server.run)
+	mux.HandleFunc("/run/", server.run)
+	mux.HandleFunc("/scans", server.getScans)
+	mux.HandleFunc("/scans/", server.deleteScans)
+	mux.HandleFunc("/scan", badRequest("id required"))
+	mux.HandleFunc("/scan/", server.scan)
+
+	http.Handle("/v1", http.NotFoundHandler())
+	http.Handle("/v1/", http.StripPrefix("/v1", mux))
 	http.Handle("/metrics", promhttp.Handler())
 
 	return http.ListenAndServe(listen, nil)

@@ -32,6 +32,7 @@ alerting.
 | /diff/{id1}[/{id2}]            | GET    | Compute difference between scans {id1} and {id2}, if it is given, or the expected state, otherwise                 |
 | /expected                      | GET    | Get expected state                                                                                                 |
 | /expected                      | PATCH  | Update expected state                                                                                              |
+| /hello                         | *      | hello                                                                                                              |
 | /run[/{id}]                    | POST   | Run scanner {id} or, in case {id} is not given, all scanners immediately                                           |
 | /scans                         | GET    | Get list of scan timestamps                                                                                        |
 | /scans[/{keep}]                | DELETE | Delete entries that do not contribute to the current state and, optionally, are older than {keep}                  |

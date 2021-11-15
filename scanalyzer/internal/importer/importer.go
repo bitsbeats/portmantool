@@ -100,21 +100,13 @@ func (i Importer) process(report, reportPath string) {
 	log.Print(run)
 
 	err = i.conn.Transaction(func(tx *gorm.DB) error {
-//		rows, err := tx.Model(&database.ActualState{}).Select("address, port, protocol, state").Joins("JOIN (?) ON address = a AND port = p AND protocol = proto AND scan_id = max_scan_id", tx.Model(&database.ActualState{}).Select("address a, port p, protocol proto, max(scan_id) max_scan_id").Group("address, port, protocol")).Rows()
-//		if err != nil {
-//			return err
-//		}
-
-		scan := database.Scan{ID: time.Unix(run.Start, 0)}
-		err := tx.Create(&scan).Error
-		if err != nil {
-			return err
+		scan := database.Scan{
+			ID:    time.Unix(run.Start, 0),
+			Ports: nil,
 		}
-
-		state := make([]database.ActualState, 0, 64)
 		for _, host := range run.Hosts {
 			for _, port := range host.Ports {
-				state = append(state, database.ActualState{
+				scan.Ports = append(scan.Ports, database.ActualState{
 					Target: database.Target{
 						Address: host.Address.Address,
 						Port: port.Id,
@@ -125,7 +117,7 @@ func (i Importer) process(report, reportPath string) {
 				})
 			}
 		}
-		err = tx.Create(&state).Error
+		err := tx.Create(&scan).Error
 		if err != nil {
 			return err
 		}

@@ -35,7 +35,7 @@ func CurrentState(db *gorm.DB) (state []ActualState, err error) {
 }
 
 func DiffExpected(db *gorm.DB) (diff []Diff, err error) {
-	err = db.Table("expected_states a").Select("COALESCE(a.address, b.address) address, COALESCE(a.port, b.port) port, COALESCE(a.protocol, b.protocol) protocol, a.state expected_state, b.state actual_state, scan_id, comment").Joins("FULL JOIN (?) b ON a.address = b.address AND a.port = b.port AND a.protocol = b.protocol AND a.state <> b.state", currentState(db)).Scan(&diff).Error
+	err = db.Table("expected_states a").Select("address, port, protocol, a.state expected_state, b.state actual_state, scan_id, comment").Joins("FULL JOIN (?) b USING (address, port, protocol) WHERE a.state IS DISTINCT FROM b.state", currentState(db)).Scan(&diff).Error
 	if err != nil {
 		return nil, err
 	}

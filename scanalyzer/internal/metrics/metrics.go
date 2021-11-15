@@ -54,5 +54,15 @@ func UpdateFromDatabase(db *gorm.DB) error {
 		Ports.WithLabelValues(s.Address, s.Protocol, s.State).Inc()
 	}
 
+	diff, err := database.DiffExpected(db)
+	if err != nil {
+		return err
+	}
+
+	RoguePorts.Reset()
+	for _, d := range diff {
+		RoguePorts.WithLabelValues(d.Address, d.Protocol).Inc()
+	}
+
 	return nil
 }

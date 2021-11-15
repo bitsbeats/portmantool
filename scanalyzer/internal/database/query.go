@@ -61,14 +61,13 @@ func Scans(db *gorm.DB) (scans []Scan, err error) {
 	return scans, nil
 }
 
-func StateAt(db *gorm.DB, id time.Time) ([]ActualState, error) {
-	var scan Scan
-	err := db.Joins("ActualState").Find(&scan, id).Error
+func StateAt(db *gorm.DB, id time.Time) (state []ActualState, err error) {
+	err = db.Where(&ActualState{ScanID: id}).Find(&state, id).Error
 	if err != nil {
 		return nil, err
 	}
 
-	return scan.Ports, nil
+	return state, nil
 }
 
 func currentState(db *gorm.DB) *gorm.DB {

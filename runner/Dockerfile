@@ -19,8 +19,6 @@ RUN set -e; \
 
 RUN apk add --no-cache nmap
 
-RUN mkdir -p /scan && chown nobody:nobody /scan
-
 VOLUME /scan
 WORKDIR /scan
 

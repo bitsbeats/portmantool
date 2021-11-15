@@ -26,5 +26,9 @@ services:
     volumes:
       - scan-data:/scan
 
+  web:
+    build: web
+    restart: unless-stopped
+
 volumes:
   scan-data:

@@ -27,9 +27,11 @@ supported commands:
   enter-db
   run-runner
   run-scanalyzer
+  start
   start-db
   start-scanalyzer
   start-services
+  start-webserver
   stop
   stop-services
 EOF
@@ -85,6 +87,9 @@ do
 			"$SELF_DIR/scanalyzer/scanalyzer"
 			popd || err "could not leave $SCAN_DIR"
 			;;
+		start)
+			sudo docker-compose -f "$COMPOSE_FILE" up -d database scanalyzer web
+			;;
 		start-db)
 			sudo docker-compose -f "$COMPOSE_FILE" up -d database
 			;;
@@ -95,6 +100,9 @@ do
 			pushd "$TEST_DIR" || err "could not enter $TEST_DIR"
 			sudo docker-compose -p "$TEST_COMPOSE_NAME" up -d
 			popd || err "could not leave $TEST_DIR"
+			;;
+		start-webserver)
+			sudo docker-compose -f "$COMPOSE_FILE" up -d web
 			;;
 		stop)
 			sudo docker-compose -f "$COMPOSE_FILE" down

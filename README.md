@@ -56,4 +56,4 @@ alerting.
 
 ## Database
 
-see types.sql, schema.sql
+see db/types.sql, db/schema.sql

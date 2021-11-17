@@ -1,0 +1,29 @@
+---
+
+services:
+  nginx:
+    image: alpine:3.14
+    tty: true
+
+  postgres:
+    image: alpine:3.14
+    tty: true
+
+  redis:
+    image: alpine:3.14
+    tty: true
+
+  rabbitmq:
+    image: alpine:3.14
+    tty: true
+
+  php:
+    image: alpine:3.14
+    tty: true
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 10.23.42.0/24
+

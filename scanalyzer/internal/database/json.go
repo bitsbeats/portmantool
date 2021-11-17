@@ -27,7 +27,6 @@ func (d DiffAB) MarshalJSON() ([]byte, error) {
 		"state_b":  d.StateB,
 		"scan_a":   d.ScanA,
 		"scan_b":   d.ScanB,
-		"comment":  d.Comment,
 	})
 }
 

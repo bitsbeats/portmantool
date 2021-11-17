@@ -10,7 +10,7 @@ then
 	exit 1
 fi
 
-# shellcheck disable=SC2039
+# shellcheck disable=SC3028
 RUNNER_ID="${RUNNER_ID:-$HOSTNAME}"
 
 if [ -z "$RUNNER_ID" ]

@@ -9,6 +9,8 @@ CREATE TABLE `actual_states` (
 	FOREIGN KEY (`scan_id`)		REFERENCES `scans` ON UPDATE CASCADE ON DELETE CASCADE,
 );
 
+CREATE INDEX `idx_actual_states_scan_id` ON `actual_states` (`scan_id`);
+
 CREATE TABLE `expected_states` (
 	`address`	inet,
 	`port`		integer		CHECK (`port` > 0 AND `port` < 65536),

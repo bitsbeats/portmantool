@@ -33,9 +33,9 @@ alerting.
 | /expected                      | GET    | Get expected state                                                                                                 |
 | /expected                      | PATCH  | Update expected state                                                                                              |
 | /hello                         | *      | hello                                                                                                              |
-| /run[/{id}]                    | POST   | Run scanner {id} or, in case {id} is not given, all scanners immediately                                           |
+| /run[/{id}]                    | POST   | **(NYI)** Run scanner {id} or, in case {id} is not given, all scanners immediately                                 |
 | /scans                         | GET    | Get list of scan timestamps                                                                                        |
-| /scans[/{keep}]                | DELETE | Delete entries that do not contribute to the current state and, optionally, are older than {keep}                  |
+| /scans[/{keep}]                | DELETE | **(NYI)** Delete entries that do not contribute to the current state and, optionally, are older than {keep}        |
 | /scan/{id}                     | GET    | Get result of scan at timestamp {id}                                                                               |
 |                                |        |                                                                                                                    |
 
@@ -53,6 +53,10 @@ alerting.
 * host (e.g. "10.23.42.127", "host42.bitsbeats.io")
 * protocol (e.g. "tcp", "udp")
 * state (e.g. "open", "closed")
+
+### web
+
+Currently a *very* rudimentary "web interface" (only shows diff between expected and current state, updated every 5 seconds)
 
 ## Database
 

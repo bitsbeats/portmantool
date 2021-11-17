@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -8,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/bitsbeats/portmantool/scanalyzer/internal/database"
@@ -25,7 +27,7 @@ func NewServer(db *gorm.DB) Server {
 	return Server{db}
 }
 
-func (server Server) Serve(listen string) error {
+func (server Server) ListenAndServe(listen string, ctx context.Context, wg *sync.WaitGroup) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/diff", server.diffExpected)
 	mux.HandleFunc("/diff/", server.diffTwo)
@@ -42,7 +44,28 @@ func (server Server) Serve(listen string) error {
 	http.Handle("/v1/", http.StripPrefix("/v1", mux))
 	http.Handle("/metrics", promhttp.Handler())
 
-	return http.ListenAndServe(listen, nil)
+	srv := http.Server{
+		Addr: listen,
+	}
+
+	go func() {
+		wg.Add(1)
+		defer wg.Done()
+
+		<-ctx.Done()
+
+		err := srv.Shutdown(context.Background())
+		if err != nil {
+			log.Print(err)
+		}
+	}()
+
+	err := srv.ListenAndServe()
+	if err != http.ErrServerClosed {
+		return err
+	}
+
+	return nil
 }
 
 func (server Server) diffExpected(w http.ResponseWriter, r *http.Request) {

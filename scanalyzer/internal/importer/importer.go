@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"sync"
 	"time"
 
 	"github.com/bitsbeats/portmantool/scanalyzer/internal/database"
@@ -30,21 +31,24 @@ func NewImporter(db *gorm.DB) Importer {
 	return Importer{db}
 }
 
-func (i Importer) Run(ctx context.Context) error {
+func (i Importer) Run(ctx context.Context, wg *sync.WaitGroup) error {
 	err := os.Mkdir(ArchiveDir, 0755)
 	if err != nil && !os.IsExist(err) {
 		return err
 	}
 
 	go func() {
+		wg.Add(1)
+		defer wg.Done()
+
 		for {
 			i.importScans()
 
 			select {
+			case <-time.After(3 * time.Second):
+				continue
 			case <-ctx.Done():
 				return
-			default:
-				time.Sleep(3 * time.Second)
 			}
 		}
 	}()

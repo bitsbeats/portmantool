@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"log"
+	"os"
+	"os/signal"
+	"sync"
 
 	"github.com/bitsbeats/portmantool/scanalyzer/internal/api"
 	"github.com/bitsbeats/portmantool/scanalyzer/internal/database"
@@ -28,15 +31,34 @@ func main() {
 		log.Fatal(err)
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	var wg sync.WaitGroup
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	go func() {
+		wg.Add(1)
+		defer wg.Done()
+
+		<-ctx.Done()
+		stop()
+	}()
+	defer stop() // technically unnecessary
 
 	i := importer.NewImporter(db)
-	err = i.Run(ctx)
+	err = i.Run(ctx, &wg)
 	if err != nil {
+		stop()
+		wg.Wait()
 		log.Fatal(err)
 	}
 
 	server := api.NewServer(db)
-	log.Fatal(server.Serve(env.Listen))
+	err = server.ListenAndServe(env.Listen, ctx, &wg)
+	if err != nil {
+		stop()
+		wg.Wait()
+		log.Fatal(err)
+	}
+
+	wg.Wait()
+	log.Print("bye")
 }

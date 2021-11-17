@@ -86,7 +86,50 @@ func (server Server) diffExpected(w http.ResponseWriter, r *http.Request) {
 func (server Server) diffTwo(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		w.WriteHeader(501)
+		ids := strings.Split(stripPrefix(r, "/diff/"), "/")
+		if ids[0] == "" {
+			clientError(w, r, "id1 must not be empty")
+			return
+		}
+		if len(ids) == 2 && ids[1] == "" {
+			clientError(w, r, "id2 must not be empty when given")
+			return
+		}
+		if len(ids) > 2 {
+			clientError(w, r, "too many path components")
+			return
+		}
+
+		id1, err := strconv.ParseInt(ids[0], 10, 64)
+		if err != nil {
+			clientError(w, r, err)
+			return
+		}
+
+		switch len(ids) {
+		case 1:
+			diff, err := database.DiffOne(server.db, time.Unix(id1, 0))
+			if err != nil {
+				serverError(w, r, err)
+				return
+			}
+
+			toJSON(w, r, diff)
+		case 2:
+			id2, err := strconv.ParseInt(ids[1], 10, 64)
+			if err != nil {
+				clientError(w, r, err)
+				return
+			}
+
+			diff, err := database.DiffTwo(server.db, time.Unix(id1, 0), time.Unix(id2, 0))
+			if err != nil {
+				serverError(w, r, err)
+				return
+			}
+
+			toJSON(w, r, diff)
+		}
 	default:
 		w.WriteHeader(405)
 	}

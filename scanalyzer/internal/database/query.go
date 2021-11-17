@@ -42,6 +42,27 @@ func DiffExpected(db *gorm.DB) (diff []Diff, err error) {
 	return diff, nil
 }
 
+func DiffOne(db *gorm.DB, id time.Time) (diff []Diff, err error) {
+	state := db.Model(&ActualState{}).Where(&ActualState{ScanID: id})
+	err = db.Table("expected_states a").Select("address, port, protocol, a.state expected_state, b.state actual_state, scan_id, comment").Joins("FULL JOIN (?) b USING (address, port, protocol) WHERE a.state IS DISTINCT FROM b.state", state).Scan(&diff).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return diff, nil
+}
+
+func DiffTwo(db *gorm.DB, id1, id2 time.Time) (diff []DiffAB, err error) {
+	state1 := db.Model(&ActualState{}).Where(&ActualState{ScanID: id1})
+	state2 := db.Model(&ActualState{}).Where(&ActualState{ScanID: id2})
+	err = db.Table("(?) a", state1).Select("address, port, protocol, a.state state_a, b.state state_b, a.scan_id scan_a, b.scan_id scan_b").Joins("FULL JOIN (?) b USING (address, port, protocol) WHERE a.state IS DISTINCT FROM b.state", state2).Scan(&diff).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return diff, nil
+}
+
 func Expected(db *gorm.DB) (state []ExpectedState, err error) {
 	err = db.Find(&state).Error
 	if err != nil {

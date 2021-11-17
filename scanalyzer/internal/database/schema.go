@@ -11,7 +11,7 @@ type Target struct {
 type ActualState struct {
 	Target
 	State	string		`gorm:"type:state;not null"`
-	ScanID	time.Time	`gorm:"primaryKey"`
+	ScanID	time.Time	`gorm:"primaryKey;index"`
 }
 
 type ExpectedState struct {

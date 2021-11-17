@@ -29,6 +29,8 @@ supported commands:
   run-scanalyzer
   start
   start-db
+  start-monitoring
+  start-placebo
   start-scanalyzer
   start-services
   start-webserver
@@ -92,6 +94,9 @@ do
 			;;
 		start-db)
 			sudo docker-compose -f "$COMPOSE_FILE" up -d database
+			;;
+		start-monitoring)
+			sudo docker-compose -f "$COMPOSE_FILE" up -d prometheus grafana
 			;;
 		start-placebo)
 			pushd "$TEST_DIR" || err "could not enter $TEST_DIR"

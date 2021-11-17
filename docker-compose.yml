@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_PASSWORD: 23BassSword42
     volumes:
-      - db/types.sql:/docker-entrypoint-initdb.d/types.sql:ro
+      - ./db/types.sql:/docker-entrypoint-initdb.d/types.sql:ro
 
   runner:
     build: runner

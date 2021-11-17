@@ -21,7 +21,6 @@ type (
 		StateB	string
 		ScanA	time.Time
 		ScanB	time.Time
-		Comment	string
 	}
 )
 

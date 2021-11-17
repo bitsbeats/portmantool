@@ -35,8 +35,8 @@ func (server Server) ListenAndServe(listen string, ctx context.Context, wg *sync
 	mux.HandleFunc("/hello", server.hello)
 	mux.HandleFunc("/run", server.run)
 	mux.HandleFunc("/run/", server.run)
-	mux.HandleFunc("/scans", server.getScans)
-	mux.HandleFunc("/scans/", server.deleteScans)
+	mux.HandleFunc("/scans", server.scans)
+	mux.HandleFunc("/scans/", server.pruneScans)
 	mux.HandleFunc("/scan", badRequest("id required"))
 	mux.HandleFunc("/scan/", server.scan)
 
@@ -191,7 +191,7 @@ func (server Server) run(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (server Server) getScans(w http.ResponseWriter, r *http.Request) {
+func (server Server) scans(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		scans, err := database.Scans(server.db)
@@ -201,15 +201,41 @@ func (server Server) getScans(w http.ResponseWriter, r *http.Request) {
 		}
 
 		toJSON(w, r, scans)
+	case "DELETE":
+		err := database.Prune(server.db, time.Now())
+		if err != nil {
+			serverError(w, r, err)
+			return
+		}
+
+		w.WriteHeader(204)
 	default:
 		w.WriteHeader(405)
 	}
 }
 
-func (server Server) deleteScans(w http.ResponseWriter, r *http.Request) {
+func (server Server) pruneScans(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "DELETE":
-		w.WriteHeader(501)
+		keep := stripPrefix(r, "/scans/")
+		if keep == "" {
+			clientError(w, r, "keep must not be empty when given")
+			return
+		}
+
+		timestamp, err := strconv.ParseInt(keep, 10, 64)
+		if err != nil {
+			clientError(w, r, err)
+			return
+		}
+
+		err = database.Prune(server.db, time.Unix(timestamp, 0))
+		if err != nil {
+			serverError(w, r, err)
+			return
+		}
+
+		w.WriteHeader(204)
 	default:
 		w.WriteHeader(405)
 	}

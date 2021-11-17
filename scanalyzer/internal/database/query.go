@@ -72,6 +72,16 @@ func Expected(db *gorm.DB) (state []ExpectedState, err error) {
 	return state, nil
 }
 
+func Prune(db *gorm.DB, keep time.Time) error {
+	current := db.Model(&ActualState{}).Select("MAX(scan_id)").Group("address, port, protocol")
+	err := db.Delete(&Scan{}, "id NOT IN (?) AND id < ?", current, keep).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func Scans(db *gorm.DB) (scans []Scan, err error) {
 	err = db.Find(&scans).Error
 	if err != nil {

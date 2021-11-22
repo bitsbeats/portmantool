@@ -22,5 +22,9 @@ fi
 rm -f "$RUNNER_ID.xml"
 "$NMAP_PATH" -oX "$RUNNER_ID.xml" "$@"
 
-mkdir -p "./reports"
-rn "$RUNNER_ID.xml" "reports/$(date "+%Y%m%d-%H%M%S").$RUNNER_ID.xml"
+SCANALYZER_ADDRESS="${SCANALYZER_ADDRESS:-scanalyzer:4280}"
+
+curl -s "http://$SCANALYZER_ADDRESS/v1/scan" -H 'Content-Type: application/xml' -d "@$RUNNER_ID.xml"
+
+mkdir -p "./archive"
+mv "$RUNNER_ID.xml" "archive/$(date "+%Y%m%d-%H%M%S").$RUNNER_ID.xml"

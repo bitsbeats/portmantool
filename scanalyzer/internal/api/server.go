@@ -264,7 +264,7 @@ func (server Server) scan(w http.ResponseWriter, r *http.Request) {
 		}
 
 		toJSON(w, r, scan)
-	case "PUT":
+	case "POST":
 		if r.Header.Get("Content-Type") != "application/xml" && r.Header.Get("Content-Type") != "text/xml" {
 			clientError(w, r, "scan report must be sent as xml")
 			return

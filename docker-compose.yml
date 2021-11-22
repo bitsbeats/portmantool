@@ -23,8 +23,6 @@ services:
     environment:
       DB_HOST: database
       DB_PASSWORD: 23BassSword42
-    volumes:
-      - scan-data:/scan
 
   web:
     build: web

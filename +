@@ -48,14 +48,14 @@ SCAN_DIR="$TEST_DIR/scan"
 TEST_COMPOSE_NAME=portmantool_test
 
 COMPOSE_FILE="$SELF_DIR/${COMPOSE_FILE:-docker-compose.test.yml}"
-DB_NAME="${DB_NAME:-postgres}"
-DB_USER="${DB_USER:-postgres}"
-NMAP_PATH="${NMAP_PATH:-$(which nmap)}"
-RUNNER_ID="${RUNNER_ID:-$HOSTNAME}"
 SCAN_INTERVAL="${SCAN_INTERVAL:-10s}"
-SCANALYZER_ADDRESS="${SCANALYZER_ADDRESS:-localhost:8000}"
 
+export DB_NAME="${DB_NAME:-postgres}"
+export DB_USER="${DB_USER:-postgres}"
 export DB_PASSWORD="${DB_PASSWORD:-23BassSword42}"
+export NMAP_PATH="${NMAP_PATH:-$(which nmap)}"
+export RUNNER_ID="${RUNNER_ID:-$HOSTNAME}"
+export SCANALYZER_ADDRESS="${SCANALYZER_ADDRESS:-localhost:8000}"
 
 err() {
 	echo "$1" >&2

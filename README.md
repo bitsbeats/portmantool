@@ -17,8 +17,8 @@ done
 
 ### scanalyzer
 
-This program imports the scan reports from the shared directory into a database
-and, if it has been successful, archives them.
+This program receives scan reports from the runner and imports them into a
+database.
 
 The API provides endpoints for retrieving scan results as well as updating the
 expected state. A Prometheus `/metrics` endpoint provides metrics useful for
@@ -36,6 +36,7 @@ alerting.
 | /run[/{id}]                    | POST   | **(NYI)** Run scanner {id} or, in case {id} is not given, all scanners immediately                                 |
 | /scans                         | GET    | Get list of scan timestamps                                                                                        |
 | /scans[/{keep}]                | DELETE | **(NYI)** Delete entries that do not contribute to the current state and, optionally, are older than {keep}        |
+| /scan                          | PUT    | Upload a new scan report                                                                                           |
 | /scan/{id}                     | GET    | Get result of scan at timestamp {id}                                                                               |
 |                                |        |                                                                                                                    |
 

@@ -9,7 +9,6 @@ import (
 
 	"github.com/bitsbeats/portmantool/scanalyzer/internal/api"
 	"github.com/bitsbeats/portmantool/scanalyzer/internal/database"
-	"github.com/bitsbeats/portmantool/scanalyzer/internal/importer"
 	"github.com/bitsbeats/portmantool/scanalyzer/internal/metrics"
 )
 
@@ -42,14 +41,6 @@ func main() {
 		stop()
 	}()
 	defer stop() // technically unnecessary
-
-	i := importer.NewImporter(db)
-	err = i.Run(ctx, &wg)
-	if err != nil {
-		stop()
-		wg.Wait()
-		log.Fatal(err)
-	}
 
 	server := api.NewServer(db)
 	err = server.ListenAndServe(env.Listen, ctx, &wg)

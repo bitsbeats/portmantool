@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/bitsbeats/portmantool/scanalyzer/internal/database"
+	"github.com/bitsbeats/portmantool/scanalyzer/internal/importer"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"gorm.io/gorm"
@@ -37,7 +38,7 @@ func (server Server) ListenAndServe(listen string, ctx context.Context, wg *sync
 	mux.HandleFunc("/run/", server.run)
 	mux.HandleFunc("/scans", server.scans)
 	mux.HandleFunc("/scans/", server.pruneScans)
-	mux.HandleFunc("/scan", badRequest("id required"))
+	mux.HandleFunc("/scan", server.scan)
 	mux.HandleFunc("/scan/", server.scan)
 
 	http.Handle("/v1", http.NotFoundHandler())
@@ -245,7 +246,7 @@ func (server Server) scan(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		id := stripPrefix(r, "/scan/")
-		if id == "" {
+		if !strings.HasPrefix(r.URL.Path, "/scan/") || id == "" {
 			clientError(w, r, "id must not be empty")
 			return
 		}
@@ -263,6 +264,25 @@ func (server Server) scan(w http.ResponseWriter, r *http.Request) {
 		}
 
 		toJSON(w, r, scan)
+	case "PUT":
+		if r.Header.Get("Content-Type") != "application/xml" && r.Header.Get("Content-Type") != "text/xml" {
+			clientError(w, r, "scan report must be sent as xml")
+			return
+		}
+
+		data, err := io.ReadAll(r.Body)
+		if err != nil {
+			serverError(w, r, err)
+			return
+		}
+
+		err = importer.Import(server.db, data)
+		if err != nil {
+			serverError(w, r, err)
+			return
+		}
+
+		w.WriteHeader(204)
 	default:
 		w.WriteHeader(405)
 	}

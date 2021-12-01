@@ -79,6 +79,11 @@ func Prune(db *gorm.DB, keep time.Time) error {
 		return err
 	}
 
+	err = db.Delete(&ActualState{}, "ROW(address, port, protocol, scan_id) NOT IN (?) AND scan_id < ?", current.Select("address, port, protocol, MAX(scan_id)"), keep).Error
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

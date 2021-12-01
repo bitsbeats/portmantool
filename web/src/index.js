@@ -20,7 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
 					'comment',
 				].map(property => {
 					const td = document.createElement('td');
-					td.innerText = data[property];
+					if (property === 'scan_id') {
+						td.innerText = new Date(data[property]).toLocaleString();
+					} else {
+						td.innerText = data[property];
+					}
 
 					return td;
 				}));

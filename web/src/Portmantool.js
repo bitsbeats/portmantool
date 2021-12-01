@@ -1,4 +1,4 @@
-class Portmantool {
+export default class Portmantool {
 	constructor() {
 		this.apiUrl = `${window.origin}/v1`;
 	}

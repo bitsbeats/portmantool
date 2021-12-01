@@ -4,3 +4,7 @@ scanalyzer/scanalyzer
 
 test/scan/*
 !test/scan/.gitkeep
+
+web/dist/*
+!web/dist/index.html
+web/node_modules/

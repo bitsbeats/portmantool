@@ -59,6 +59,16 @@ alerting.
 
 Currently a *very* rudimentary "web interface" (only shows diff between expected and current state, updated every 5 seconds)
 
+#### Planned
+
+* *implemented* View diff expected/current
+* View and edit expected state
+  * Add, change, remove
+* View list of scans
+  * View result of a single scan
+  * Select one/two scans to compare to expected state/each other
+  * "Prune scans" button
+
 ## Database
 
 see db/types.sql, db/schema.sql

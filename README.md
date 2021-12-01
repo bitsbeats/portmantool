@@ -35,7 +35,7 @@ alerting.
 | /hello                         | *      | hello                                                                                                              |
 | /run[/{id}]                    | POST   | **(NYI)** Run scanner {id} or, in case {id} is not given, all scanners immediately                                 |
 | /scans                         | GET    | Get list of scan timestamps                                                                                        |
-| /scans[/{keep}]                | DELETE | **(NYI)** Delete entries that do not contribute to the current state and, optionally, are older than {keep}        |
+| /scans[/{keep}]                | DELETE | Delete entries that do not contribute to the current state and, optionally, are older than {keep}                  |
 | /scan                          | POST   | Upload a new scan report                                                                                           |
 | /scan/{id}                     | GET    | Get result of scan at timestamp {id}                                                                               |
 |                                |        |                                                                                                                    |

@@ -7,23 +7,48 @@
 		<link rel="stylesheet" href="main.css">
 	</head>
 	<body>
-		<h1>Portmantool</h1>
-		<h2>Diff: expected/current</h2>
-		<table>
-			<thead>
-				<tr>
-					<th>Address</th>
-					<th>Port</th>
-					<th>Protocol</th>
-					<th>Expected state</th>
-					<th>Current state</th>
-					<th>Last scanned</th>
-					<th>Comment</th>
-				</tr>
-			</thead>
-			<tbody id="target">
-			</tbody>
-		</table>
+		<nav class="navbar" role="navigation" aria-label="main navigation">
+			<div class="container">
+				<div class="navbar-brand">
+					<a class="navbar-item" href="#">Portmantool</a>
+
+					<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+						<span aria-hidden="true"></span>
+						<span aria-hidden="true"></span>
+						<span aria-hidden="true"></span>
+					</a>
+				</div>
+
+				<div class="navbar-menu">
+					<div class="navbar-start">
+						<a class="navbar-item">Expected state</a>
+						<a class="navbar-item">Scan results</a>
+					</div>
+					<div class="navbar-end"></div>
+				</div>
+			</div>
+		</nav>
+
+		<section class="section">
+			<div class="container">
+				<table class="table is-striped is-fullwidth">
+					<thead>
+						<tr>
+							<th>Address</th>
+							<th>Port</th>
+							<th>Protocol</th>
+							<th>Expected state</th>
+							<th>Current state</th>
+							<th>Last scanned</th>
+							<th>Comment</th>
+						</tr>
+					</thead>
+					<tbody id="target">
+					</tbody>
+				</table>
+			</div>
+		</section>
+
 		<script src="main.js"></script>
 	</body>
 </html>

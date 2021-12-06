@@ -17,6 +17,7 @@
     "webpack-cli": "^4.9.1"
   },
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "build-html": "node html/build.js"
   }
 }

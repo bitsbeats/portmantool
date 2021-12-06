@@ -3,7 +3,7 @@ FROM node:lts-alpine AS builder
 COPY . /build
 
 WORKDIR /build
-RUN yarn install && yarn build
+RUN yarn install && yarn build && yarn build-html
 
 
 FROM nginx:stable-alpine

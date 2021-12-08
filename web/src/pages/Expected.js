@@ -23,7 +23,7 @@ export default class Expected {
 			console.log(error);
 		}
 
-		setTimeout(() => this.update(), 5000);
+//		setTimeout(() => this.update(), 5000);
 	}
 }
 

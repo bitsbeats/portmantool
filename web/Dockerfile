@@ -1,9 +1,12 @@
 FROM node:lts-alpine AS builder
 
-COPY . /build
-
 WORKDIR /build
-RUN yarn install && yarn build && yarn build-html
+
+COPY package.json yarn.lock /build/
+RUN yarn install
+
+COPY . /build
+RUN yarn build && yarn build-html
 
 
 FROM nginx:stable-alpine

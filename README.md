@@ -57,17 +57,15 @@ alerting.
 
 ### web
 
-Currently a *very* rudimentary "web interface" (only shows diff between expected and current state, updated every 5 seconds)
+* Show diff between expected and current state, updated every 5 seconds
+* Show expected state
+* Show (list of) scan results, prune obsolete
 
 #### Planned
 
-* *implemented* View diff expected/current
-* View and edit expected state
-  * Add, update
-* View list of scans
-  * View result of a single scan
-  * Select one/two scans to compare to expected state/each other
-  * *implemented* "Prune scans" button
+* Edit expected state
+  * Add independent of diff, update
+* Compare scan(s) to expected state/each other
 
 ## Database
 

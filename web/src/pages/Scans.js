@@ -1,3 +1,5 @@
+import {renderTbody} from '../helpers';
+
 export default class Scans {
 	constructor(api) {
 		this.api = api;
@@ -10,13 +12,7 @@ export default class Scans {
 	}
 
 	async load() {
-		try {
-			const scans = await this.api.get('scans');
-
-			document.getElementById('scans').replaceChildren(...scans.map(scan => this.createEntry(scan.id)));
-		} catch (error) {
-			console.log(error);
-		}
+		await this.update();
 
 		const keep = document.getElementById('keep');
 		keep.addEventListener('change', event => {
@@ -29,17 +25,51 @@ export default class Scans {
 				await this.api.prune(this.keep);
 			} catch (error) {
 				console.log(error);
+				return;
 			}
+
+			await this.update();
 		});
 	}
 
-	async show() {
-		if (this.scan1 === null) {
+	async update() {
+		try {
+			const scans = await this.api.get('scans');
+
+			this.scan1 = null;
+			this.scan2 = null;
+			await this.show(true, true);
+
+			document.getElementById('scans').replaceChildren(...scans.map(scan => this.createEntry(scan.id)));
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	async show(scan1Changed, scan2Changed) {
+		if (!scan1Changed) { // TODO
 			return;
 		}
 
-		console.log(this.scan1);
-		console.log(this.scan2);
+		const result = [];
+
+		if (this.scan1 !== null) {
+			try {
+				const scan = await this.api.get(`scan/${this.scan1}`);
+
+				result.push(...scan);
+			} catch (error) {
+				console.log(error);
+				return;
+			}
+		}
+
+		renderTbody(document.getElementById('result'), result, [
+			'address',
+			'port',
+			'protocol',
+			'state',
+		]);
 	}
 
 	createEntry(id) {
@@ -55,7 +85,7 @@ export default class Scans {
 		scan1Input.value = id;
 		scan1Input.addEventListener('change', event => {
 			this.scan1 = event.target.value;
-			this.show();
+			this.show(true, false);
 		});
 
 		const scan1Link = document.createElement('a');
@@ -73,13 +103,13 @@ export default class Scans {
 		scan2Input.value = id;
 		scan2Input.addEventListener('change', event => {
 			this.scan2 = event.target.value;
-			this.show();
+			this.show(false, true);
 		});
 		scan2Input.addEventListener('click', event => {
 			if (this.scan2 === event.target.value) {
 				event.target.checked = false;
 				this.scan2 = null;
-				this.show();
+				this.show(false, true);
 			}
 		});
 

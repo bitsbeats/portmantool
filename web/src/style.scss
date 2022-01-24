@@ -1,2 +1,37 @@
 @charset "utf-8";
 @import "~bulma/bulma";
+
+.menu-list .radio {
+	display: block;
+
+	a {
+		user-select: none;
+	}
+
+	input {
+		display: none;
+
+		&:checked + a {
+			background-color: $menu-item-active-background-color;
+			color: $menu-item-active-color;
+		}
+	}
+
+	&:not(:first-child) a {
+		border-bottom-left-radius: 0;
+		border-top-left-radius: 0;
+	}
+
+	&:not(:last-child) a {
+		border-bottom-right-radius: 0;
+		border-top-right-radius: 0;
+	}
+
+	& + .radio {
+		@include ltr-property("margin", 0, false);
+	}
+}
+
+.modal:target {
+	display: flex;
+}

@@ -46,7 +46,7 @@ alerting.
 | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | portmantool_ports                        | Number of unique host/protocol/port combinations in database (labels: host, protocol, state)                      |
 | portmantool_ports_rogue                  | Number of ports with a state different from the expected (labels: host, protocol)                                 |
-| portmantool_imports_failed_total         | Total number of failed imports                                                                                    |
+| portmantool_imports_failed_total         | Total number of failed imports since server was running                                                           |
 | portmantool_                             |                                                                                                                   |
 
 ##### Labels
@@ -63,7 +63,7 @@ Currently a *very* rudimentary "web interface" (only shows diff between expected
 
 * *implemented* View diff expected/current
 * View and edit expected state
-  * Add, change, remove
+  * Add, update
 * View list of scans
   * View result of a single scan
   * Select one/two scans to compare to expected state/each other

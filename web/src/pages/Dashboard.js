@@ -1,5 +1,3 @@
-import {renderTbody} from '../helpers';
-
 const KEYS_DIFF = [
 	'address',
 	'port',

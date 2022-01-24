@@ -1,0 +1,39 @@
+<div class="field is-grouped is-grouped-right">
+	<div class="field-label is-normal">
+		<label class="label">Delete results older than</label>
+	</div>
+	<div class="control">
+		<input class="input" id="keep" type="date">
+	</div>
+	<div class="control">
+		<a class="button is-danger" href="#confirm-prune">🗑 Prune</a>
+	</div>
+</div>
+<div class="columns">
+	<div class="column is-one-fifth">
+		<aside class="menu">
+			<ul class="menu-list" id="scans">
+			</ul>
+		</aside>
+	</div>
+	<div class="column is-four-fifths" id="result">
+	</div>
+</div>
+<div class="modal" id="confirm-prune">
+	<div class="modal-background"></div>
+	<div class="modal-content">
+		<div class="message is-danger">
+			<div class="message-header">
+				<p>Prune scan results</p>
+				<a class="delete" href="#"></a>
+			</div>
+			<div class="message-body">
+				<p>Do you really want to prune all entries not contributing to the current state<span id="keep-info"></span>?</p>
+				<p class="has-text-right mt-4">
+					<button class="button is-success" id="prune">&#10003; Yes</button>
+					<a class="button is-danger" href="#">&#10007; No</a>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>

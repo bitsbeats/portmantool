@@ -4,10 +4,10 @@ export default class Expected {
 	constructor(api) {
 		this.api = api;
 
-		this.update();
+		this.load();
 	}
 
-	async update() {
+	async load() {
 		try {
 			const expected = await this.api.get('expected');
 
@@ -22,8 +22,5 @@ export default class Expected {
 		} catch (error) {
 			console.log(error);
 		}
-
-//		setTimeout(() => this.update(), 5000);
 	}
 }
-

@@ -58,13 +58,14 @@ alerting.
 ### web
 
 * Show diff between expected and current state, updated every 5 seconds
-* Show expected state
+* Show expected state, add independent of diff
 * Show (list of) scan results, prune obsolete
 
 #### Planned
 
 * Edit expected state
-  * Add independent of diff, update
+  * Update
+  * Delete (needs implementation in backend)
 * Compare scan(s) to expected state/each other
 
 ## Database

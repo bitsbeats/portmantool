@@ -11,7 +11,12 @@ const KEYS_DIFF = [
 export default class Dashboard {
 	constructor(api) {
 		this.api = api;
+
+		this.ups = 10;
+		this.interval = 5 * this.ups;
 		this.nextUpdate = 0;
+
+		document.getElementById('nextUpdate').max = this.interval - 1;
 
 		this.update();
 	}
@@ -101,14 +106,14 @@ export default class Dashboard {
 				console.log(error);
 			}
 
-			this.nextUpdate = 5;
+			this.nextUpdate = this.interval;
 		}
 
 		--this.nextUpdate;
 
 		const progress = document.getElementById('nextUpdate');
-		progress.value = 4 - this.nextUpdate;
+		progress.value = progress.max - this.nextUpdate;
 
-		setTimeout(() => this.update(), 1000);
+		setTimeout(() => this.update(), 1000/this.ups);
 	}
 }

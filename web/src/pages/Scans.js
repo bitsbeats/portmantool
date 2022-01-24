@@ -23,12 +23,13 @@ export default class Scans {
 		document.getElementById('prune').addEventListener('click', async () => {
 			try {
 				await this.api.prune(this.keep);
+
+				await this.update();
 			} catch (error) {
 				console.log(error);
-				return;
 			}
 
-			await this.update();
+			window.location.hash = '';
 		});
 	}
 

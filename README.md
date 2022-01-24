@@ -67,7 +67,7 @@ Currently a *very* rudimentary "web interface" (only shows diff between expected
 * View list of scans
   * View result of a single scan
   * Select one/two scans to compare to expected state/each other
-  * "Prune scans" button
+  * *implemented* "Prune scans" button
 
 ## Database
 

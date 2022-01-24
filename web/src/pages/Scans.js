@@ -99,6 +99,7 @@ export default class Scans {
 		scan2.classList.add('radio');
 
 		const scan2Input = document.createElement('input');
+		scan2Input.disabled = true; // TODO
 		scan2Input.name = 'scan2';
 		scan2Input.type = 'radio';
 		scan2Input.value = id;

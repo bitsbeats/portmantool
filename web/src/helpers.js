@@ -3,7 +3,9 @@ export function renderTbody(elem, data, keys) {
 		const tr = document.createElement('tr');
 		tr.replaceChildren(...keys.map(key => {
 			const td = document.createElement('td');
-			td.innerText = row[key];
+			if (key !== null) {
+				td.innerText = row[key];
+			}
 
 			return td;
 		}));

@@ -1,29 +1,22 @@
-import {renderTbody} from '../helpers';
+const KEYS_EXPECTED = [
+	'address',
+	'port',
+	'protocol',
+	'state',
+	'comment',
+	null, // "add" button
+];
 
 export default class Expected {
 	constructor(api) {
 		this.api = api;
+		this.rows = [];
 
 		this.load();
 	}
 
 	async load() {
 		const target = document.getElementById('target');
-
-		try {
-			const expected = await this.api.get('expected');
-
-			renderTbody(target, expected, [
-				'address',
-				'port',
-				'protocol',
-				'state',
-				'comment',
-				null,
-			]);
-		} catch (error) {
-			console.log(error);
-		}
 
 		const inputs = document.createElement('tr');
 
@@ -45,19 +38,43 @@ export default class Expected {
 		button.append(icon);
 		button.addEventListener('click', async () => {
 			const [address, port, protocol, state, comment] = ['address', 'port', 'protocol', 'state', 'comment'].map(id => document.getElementById(id));
+			const data = {
+				address: address.value,
+				port: Number.parseInt(port.value),
+				protocol: protocol.value,
+				state: state.value,
+				comment: comment.value,
+			};
 
 			try {
-				await this.api.update([{
-					address: address.value,
-					port: Number.parseInt(port.value),
-					protocol: protocol.value,
-					state: state.value,
-					comment: comment.value,
-				}]);
+				await this.api.update([data]);
 			} catch (error) {
 				console.log(error);
 				return;
 			}
+
+			let row = this.rows.find(r => {
+				const [addr, p, proto] = r.children;
+				return addr.innerText === address.value && p.innerText === port.value && proto.innerText === protocol.value;
+			});
+
+			if (row === null) {
+				row = document.createElement('tr');
+
+				inputs.after(row);
+			}
+
+			row.classList.add('is-selected');
+			setTimeout(() => row.classList.remove('is-selected'), 500);
+
+			row.replaceChildren(...KEYS_EXPECTED.map(key => {
+				const td = document.createElement('td');
+				if (key !== null) {
+					td.innerText = data[key];
+				}
+
+				return td;
+			}));
 
 			address.value = '';
 			port.value = '';
@@ -70,7 +87,40 @@ export default class Expected {
 
 		inputs.append(td);
 
-		target.prepend(inputs);
+		try {
+			const expected = await this.api.get('expected');
+
+			this.rows = expected.map(data => {
+				const tr = document.createElement('tr');
+				['is-clickable'].forEach(cls => tr.classList.add(cls));
+
+				tr.replaceChildren(...KEYS_EXPECTED.map(key => {
+					const td = document.createElement('td');
+					if (key !== null) {
+						td.innerText = data[key];
+					}
+
+					return td;
+				}));
+
+				tr.addEventListener('click', () => {
+					const [address, port, protocol, state, comment] = ['address', 'port', 'protocol', 'state', 'comment'].map(id => document.getElementById(id));
+					const [addr, p, proto, s, c] = tr.children;
+
+					address.value = addr.innerText;
+					port.value = p.innerText;
+					protocol.value = proto.innerText;
+					state.value = s.innerText;
+					comment.value = c.innerText;
+				});
+
+				return tr;
+			});
+		} catch (error) {
+			console.log(error);
+		}
+
+		target.replaceChildren(inputs, ...this.rows);
 	}
 
 	createInputCell(id, type, range, placeholder) {

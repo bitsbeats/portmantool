@@ -58,13 +58,12 @@ alerting.
 ### web
 
 * Show diff between expected and current state, updated every 5 seconds
-* Show expected state, add independent of diff
+* Show expected state, add and update independent of diff
 * Show (list of) scan results, prune obsolete
 
 #### Planned
 
 * Edit expected state
-  * Update
   * Delete (needs implementation in backend)
 * Compare scan(s) to expected state/each other
 

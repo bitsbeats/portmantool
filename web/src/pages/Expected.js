@@ -79,9 +79,9 @@ export default class Expected {
 		if (type === 'select') {
 			const select = document.createElement('div');
 			['select', 'is-small'].forEach(cls => select.classList.add(cls));
-			select.id = id;
 
 			const input = document.createElement('select');
+			input.id = id;
 			input.replaceChildren(...range.map(value => {
 				const option = document.createElement('option');
 				option.innerText = value;

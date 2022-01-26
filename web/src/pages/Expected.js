@@ -78,8 +78,8 @@ export default class Expected {
 
 			address.value = '';
 			port.value = '';
-			protocol.value = '';
-			state.value = '';
+			protocol.value = document.querySelector('#protocol option[selected]').value;
+			state.value = document.querySelector('#state option[selected]').value;
 			comment.value = '';
 		});
 
@@ -135,8 +135,11 @@ export default class Expected {
 			input.replaceChildren(...range.map(value => {
 				const option = document.createElement('option');
 				option.innerText = value;
-				option.selected = value === placeholder;
 				option.value = value;
+
+				if (value === placeholder) {
+					option.setAttribute('selected', '');
+				}
 
 				return option;
 			}));

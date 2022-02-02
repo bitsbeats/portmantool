@@ -35,7 +35,7 @@ alerting.
 | /hello                         | *      | hello                                                                                                              |
 | /run[/{id}]                    | POST   | **(NYI)** Run scanner {id} or, in case {id} is not given, all scanners immediately                                 |
 | /scans                         | GET    | Get list of scan timestamps                                                                                        |
-| /scans[/{keep}]                | DELETE | Delete entries that do not contribute to the current state and, optionally, are older than {keep}                  |
+| /scans[/{keep}]                | DELETE | Delete entries that do not contribute to the current state and, optionally, are older than {keep} (UNIX timestamp) |
 | /scan                          | POST   | Upload a new scan report                                                                                           |
 | /scan/{id}                     | GET    | Get result of scan at timestamp {id}                                                                               |
 |                                |        |                                                                                                                    |
@@ -44,6 +44,7 @@ alerting.
 
 | Name                                     | Description                                                                                                       |
 | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| portmantool_last_import                  | **(NYI)** Timestamp of last successful import                                                                     |
 | portmantool_ports                        | Number of unique host/protocol/port combinations in database (labels: host, protocol, state)                      |
 | portmantool_ports_rogue                  | Number of ports with a state different from the expected (labels: host, protocol)                                 |
 | portmantool_imports_failed_total         | Total number of failed imports since server was running                                                           |
@@ -66,6 +67,10 @@ alerting.
 * Edit expected state
   * Delete (needs implementation in backend)
 * Compare scan(s) to expected state/each other
+* Show "no diff found" if no entries are returned
+* Date-time in ISO format
+* Edit buttons for expected state
+* Show date-time of last successful import
 
 ## Database
 

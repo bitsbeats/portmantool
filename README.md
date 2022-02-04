@@ -68,7 +68,6 @@ alerting.
   * Delete (needs implementation in backend)
 * Compare scan(s) to expected state/each other
 * Show "no diff found" if no entries are returned
-* Edit buttons for expected state
 * Show date-time of last successful import
 * Filter tables
 

@@ -18,7 +18,7 @@ const KEYS_EXPECTED = [
 	'protocol',
 	'state',
 	'comment',
-	null, // "add" button
+	'button',
 ];
 
 export default class Expected {
@@ -81,9 +81,29 @@ export default class Expected {
 			row.classList.add('is-selected');
 			setTimeout(() => row.classList.remove('is-selected'), 500);
 
+			const button = document.createElement('button');
+			['button', 'is-small', 'is-light'].forEach(cls => button.classList.add(cls));
+
+			const icon = document.createElement('span');
+			['icon', 'has-text-weight-bold'].forEach(cls => icon.classList.add(cls));
+			icon.append(document.createTextNode('\u130b8'));
+
+			button.addEventListener('click', () => {
+				const [address, port, protocol, state, comment] = ['address', 'port', 'protocol', 'state', 'comment'].map(id => document.getElementById(id));
+				const [addr, p, proto, s, c] = tr.children;
+
+				address.value = addr.innerText;
+				port.value = p.innerText;
+				protocol.value = proto.innerText;
+				state.value = s.innerText;
+				comment.value = c.innerText;
+			});
+
 			row.replaceChildren(...KEYS_EXPECTED.map(key => {
 				const td = document.createElement('td');
-				if (key !== null) {
+				if (key === 'button') {
+					td.append(button);
+				} else {
 					td.innerText = data[key];
 				}
 
@@ -106,18 +126,16 @@ export default class Expected {
 
 			this.rows = expected.map(data => {
 				const tr = document.createElement('tr');
-				['is-clickable'].forEach(cls => tr.classList.add(cls));
 
-				tr.replaceChildren(...KEYS_EXPECTED.map(key => {
-					const td = document.createElement('td');
-					if (key !== null) {
-						td.innerText = data[key];
-					}
+				const button = document.createElement('button');
+				['button', 'is-small', 'is-light'].forEach(cls => button.classList.add(cls));
 
-					return td;
-				}));
+				const icon = document.createElement('span');
+				['icon', 'has-text-weight-bold'].forEach(cls => icon.classList.add(cls));
+				icon.append(document.createTextNode('\u25b2'));
 
-				tr.addEventListener('click', () => {
+				button.append(icon);
+				button.addEventListener('click', () => {
 					const [address, port, protocol, state, comment] = ['address', 'port', 'protocol', 'state', 'comment'].map(id => document.getElementById(id));
 					const [addr, p, proto, s, c] = tr.children;
 
@@ -127,6 +145,17 @@ export default class Expected {
 					state.value = s.innerText;
 					comment.value = c.innerText;
 				});
+
+				tr.replaceChildren(...KEYS_EXPECTED.map(key => {
+					const td = document.createElement('td');
+					if (key === 'button') {
+						td.append(button);
+					} else {
+						td.innerText = data[key];
+					}
+
+					return td;
+				}));
 
 				return tr;
 			});

@@ -64,12 +64,15 @@ alerting.
 
 #### Planned
 
-* Edit expected state
-  * Delete (needs implementation in backend)
-* Compare scan(s) to expected state/each other
+* Compare scan(s) to current state (backend currently compares to expected state)/each other
 * Show "no diff found" if no entries are returned
 * Show date-time of last successful import
 * Filter tables
+
+#### Backlog
+
+* Edit expected state
+  * Delete (needs implementation in backend)
 
 ## Database
 

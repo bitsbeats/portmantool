@@ -5,7 +5,7 @@
   "main": "webpack.config.js",
   "repository": "https://github.com/bitsbeats/portmantool",
   "author": "Luca Schmid <lsc@bitsbeats.com>",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "private": false,
   "devDependencies": {
     "bulma": "^0.9.3",

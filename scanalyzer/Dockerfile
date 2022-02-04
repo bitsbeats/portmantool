@@ -4,7 +4,7 @@ COPY . src/scanalyzer/
 RUN cd src/scanalyzer && go build -o ../../bin/scanalyzer ./cmd/scanalyzer
 
 
-FROM alpine:3.14
+FROM alpine:3.15
 
 COPY --from=builder /go/bin/scanalyzer /usr/local/bin/
 

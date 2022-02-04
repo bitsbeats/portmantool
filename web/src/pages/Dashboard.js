@@ -28,11 +28,11 @@ export default class Dashboard {
 	constructor(api) {
 		this.api = api;
 
-		this.ups = 10;
+		this.ups = 1;
 		this.interval = 5 * this.ups;
 		this.nextUpdate = 0;
 
-		document.getElementById('nextUpdate').max = this.interval - 1;
+		document.getElementById('nextUpdate').innerText = `${this.interval}s`;
 
 		this.update();
 	}
@@ -125,10 +125,9 @@ export default class Dashboard {
 			this.nextUpdate = this.interval;
 		}
 
-		--this.nextUpdate;
+		document.getElementById('nextUpdate').innerText = `${this.nextUpdate}s`;
 
-		const progress = document.getElementById('nextUpdate');
-		progress.value = progress.max - this.nextUpdate;
+		--this.nextUpdate;
 
 		setTimeout(() => this.update(), 1000/this.ups);
 	}

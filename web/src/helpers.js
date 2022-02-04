@@ -12,6 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export function formatDateTime(date) {
+	if (!(date instanceof Date)) {
+		date = new Date(date);
+	}
+
+	const i = 'yyyy-mm-dd'.length;
+	const j = 'hh:mm:ss'.length;
+
+	const str = date.toISOString();
+	return `${str.substring(0, i)} ${str.substring(i+1, i+j+1)}`;
+}
+
 export function renderTbody(elem, data, keys) {
 	elem.replaceChildren(...data.map(row => {
 		const tr = document.createElement('tr');

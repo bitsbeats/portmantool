@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import {formatDateTime} from '../helpers';
+
 const KEYS_DIFF = [
 	'address',
 	'port',
@@ -110,7 +112,7 @@ export default class Dashboard {
 					};
 					setValue('expected_state', row['expected_state']);
 					setValue('actual_state', row['actual_state']);
-					setValue('scan_id', new Date(row['scan_id']).toLocaleString());
+					setValue('scan_id', row['actual_state'] !== '' ? formatDateTime(row['scan_id']) : '');
 
 					return tr;
 				}));

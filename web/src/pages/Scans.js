@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {renderTbody} from '../helpers';
+import {formatDateTime, renderTbody} from '../helpers';
 
 export default class Scans {
 	constructor(api) {
@@ -104,7 +104,7 @@ export default class Scans {
 		});
 
 		const scan1Link = document.createElement('a');
-		scan1Link.innerText = new Date(id*1000).toLocaleString();
+		scan1Link.innerText = formatDateTime(id*1000);
 
 		scan1.append(scan1Input);
 		scan1.append(scan1Link);
@@ -144,6 +144,6 @@ export default class Scans {
 	updateKeep(input) {
 		this.keep = input.value === '' ? null : input.valueAsNumber / 1000;
 
-		document.getElementById('keep-info').innerText = this.keep === null ? '' : ` older than ${new Date(this.keep*1000).toLocaleString()}`;
+		document.getElementById('keep-info').innerText = this.keep === null ? '' : ` older than ${formatDateTime(this.keep*1000)}`;
 	}
 }

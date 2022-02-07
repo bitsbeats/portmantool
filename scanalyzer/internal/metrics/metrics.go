@@ -27,6 +27,11 @@ var (
 		Help: "Total number of failed imports",
 	})
 
+	LastImport = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "portmantool_imports_last",
+		Help: "Timestamp of last successful import",
+	})
+
 	Ports = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "portmantool_ports",
@@ -45,7 +50,7 @@ var (
 )
 
 func RegisterMetrics() error {
-	collectors := []prometheus.Collector{FailedImports, Ports, RoguePorts}
+	collectors := []prometheus.Collector{FailedImports, LastImport, Ports, RoguePorts}
 
 	for _, c := range collectors {
 		err := prometheus.Register(c)

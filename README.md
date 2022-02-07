@@ -44,10 +44,10 @@ alerting.
 
 | Name                                     | Description                                                                                                       |
 | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| portmantool_last_import                  | **(NYI)** Timestamp of last successful import                                                                     |
 | portmantool_ports                        | Number of unique host/protocol/port combinations in database (labels: host, protocol, state)                      |
 | portmantool_ports_rogue                  | Number of ports with a state different from the expected (labels: host, protocol)                                 |
 | portmantool_imports_failed_total         | Total number of failed imports since server was running                                                           |
+| portmantool_imports_last                 | Timestamp of last successful import                                                                               |
 | portmantool_                             |                                                                                                                   |
 
 ##### Labels

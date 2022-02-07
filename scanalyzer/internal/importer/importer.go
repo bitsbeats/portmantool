@@ -59,6 +59,8 @@ func Import(db *gorm.DB, data []byte) error {
 		return err
 	}
 
+	metrics.LastImport.SetToCurrentTime()
+
 	err = metrics.UpdateFromDatabase(db)
 	if err != nil {
 		return err

@@ -79,7 +79,7 @@ export default class Expected {
 				return addr.innerText === address.value && p.innerText === port.value && proto.innerText === protocol.value;
 			});
 
-			if (row === null) {
+			if (row === undefined) {
 				row = document.createElement('tr');
 
 				inputs.after(row);
@@ -93,11 +93,12 @@ export default class Expected {
 
 			const icon = document.createElement('span');
 			['icon', 'has-text-weight-bold'].forEach(cls => icon.classList.add(cls));
-			icon.append(document.createTextNode('\u130b8'));
+			icon.append(document.createTextNode('\u25b2'));
 
+			button.append(icon);
 			button.addEventListener('click', () => {
 				const [address, port, protocol, state, comment] = ['address', 'port', 'protocol', 'state', 'comment'].map(id => document.getElementById(id));
-				const [addr, p, proto, s, c] = tr.children;
+				const [addr, p, proto, s, c] = row.children;
 
 				address.value = addr.innerText;
 				port.value = p.innerText;

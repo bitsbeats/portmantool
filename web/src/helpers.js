@@ -24,6 +24,35 @@ export function formatDateTime(date) {
 	return `${str.substring(0, i)} ${str.substring(i+1, i+j+1)}`;
 }
 
+export function parseFilter(value) {
+	const filter = {};
+
+	const words = value.trim().split(/\s+/);
+	for (const w of words) {
+		if (/^addr(?:ess)?:/.test(w)) {
+			const [_, address] = w.split(':', 2);
+			filter['address'] = address;
+		} else if (w.startsWith('port:')) {
+			const [_, port] = w.split(':', 2);
+			filter['port'] = port;
+		} else if (/^proto(?:col)?:/.test(w)) {
+			const [_, protocol] = w.split(':', 2);
+			filter['protocol'] = protocol;
+		} else if (w.startsWith('state:')) {
+			const [_, state] = w.split(':', 2);
+			filter['state'] = state;
+		} else if (/^exp(?:ect|ected)?:/.test(w)) {
+			const [_, expected] = w.split(':', 2);
+			filter['expected'] = expected;
+		} else if (/^actual|cur(?:r|rent)?:/.test(w)) {
+			const [_, actual] = w.split(':', 2);
+			filter['actual'] = actual;
+		}
+	}
+
+	return filter;
+}
+
 export function renderTbody(elem, data, keys) {
 	elem.replaceChildren(...data.map(row => {
 		const tr = document.createElement('tr');

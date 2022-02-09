@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import {parseFilter} from '../helpers';
+
 const KEYS_EXPECTED = [
 	'address',
 	'port',
@@ -25,11 +27,16 @@ export default class Expected {
 	constructor(api) {
 		this.api = api;
 		this.rows = [];
+		this.filter = {};
 
 		this.load();
 	}
 
 	async load() {
+		document.getElementById('filter').addEventListener('input', event => {
+			this.filter = parseFilter(event.target.value);
+		});
+
 		const target = document.getElementById('target');
 
 		const inputs = document.createElement('tr');

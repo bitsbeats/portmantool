@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {formatDateTime} from '../helpers';
+import {formatDateTime, parseFilter} from '../helpers';
 
 const KEYS_DIFF = [
 	'address',
@@ -31,6 +31,11 @@ export default class Dashboard {
 		this.ups = 1;
 		this.interval = 5 * this.ups;
 		this.nextUpdate = 0;
+		this.filter = {};
+
+		document.getElementById('filter').addEventListener('input', event => {
+			this.filter = parseFilter(event.target.value);
+		});
 
 		document.getElementById('nextUpdate').innerText = `${this.interval}s`;
 

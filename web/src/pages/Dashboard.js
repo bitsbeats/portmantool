@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {formatDateTime, parseFilter} from '../helpers';
+import {formatDateTime, matchFilter, parseFilter} from '../helpers';
 
 const KEYS_DIFF = [
 	'address',
@@ -32,9 +32,11 @@ export default class Dashboard {
 		this.interval = 5 * this.ups;
 		this.nextUpdate = 0;
 		this.filter = {};
+		this.filterNeedsUpdate = false;
 
 		document.getElementById('filter').addEventListener('input', event => {
 			this.filter = parseFilter(event.target.value);
+			this.filterNeedsUpdate = true;
 		});
 
 		document.getElementById('nextUpdate').innerText = `${this.interval}s`;
@@ -128,11 +130,32 @@ export default class Dashboard {
 			}
 
 			this.nextUpdate = this.interval;
+			this.filterNeedsUpdate = true;
 		}
 
 		document.getElementById('nextUpdate').innerText = `${this.nextUpdate}s`;
 
 		--this.nextUpdate;
+
+		if (this.filterNeedsUpdate) {
+			for (const row of document.getElementById('target').children) {
+				const [address, port, protocol, expected, current] = row.children;
+				if (!matchFilter(this.filter, {
+					address: address.innerText,
+					port: port.innerText,
+					protocol: protocol.innerText,
+					state: current.innerText,
+					expected: expected.innerText,
+					actual: current.innerText,
+				})) {
+					row.classList.add('is-hidden');
+				} else {
+					row.classList.remove('is-hidden');
+				}
+			}
+
+			this.filterNeedsUpdate = false;
+		}
 
 		setTimeout(() => this.update(), 1000/this.ups);
 	}

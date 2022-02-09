@@ -24,6 +24,35 @@ export function formatDateTime(date) {
 	return `${str.substring(0, i)} ${str.substring(i+1, i+j+1)}`;
 }
 
+export function matchFilter(filter, object) {
+	for (const key in filter) {
+		const negated = /^[-!^~]/.test(filter[key]);
+		const value = negated ? filter[key].substring(1) : filter[key];
+
+		if (object.hasOwnProperty(key)) {
+			switch (key) {
+				case 'address':
+					// support CIDR notation, comma-separated lists
+					//break;
+				case 'port':
+					// support ranges, comma-separated lists
+					//break;
+				case 'actual':
+				case 'expected':
+				case 'state':
+					// support comma-separated lists
+					//break;
+				default:
+					if (negated ? object[key] === value : object[key] !== value) {
+						return false;
+					}
+			}
+		}
+	}
+
+	return true;
+}
+
 export function parseFilter(value) {
 	const filter = {};
 

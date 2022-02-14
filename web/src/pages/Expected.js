@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {parseFilter} from '../helpers';
+import {parseFilter} from '../filter';
 
 const KEYS_EXPECTED = [
 	'address',
@@ -27,7 +27,7 @@ export default class Expected {
 	constructor(api) {
 		this.api = api;
 		this.rows = [];
-		this.filter = {};
+		this.filter = parseFilter(document.getElementById('filter').value);
 
 		this.load();
 	}

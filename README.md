@@ -65,7 +65,6 @@ alerting.
 #### Planned
 
 * Compare scan(s) to current state (backend currently compares to expected state)/each other
-* Show "no diff found" if no entries are returned
 * Show date-time of last successful import
 * Filter tables
 

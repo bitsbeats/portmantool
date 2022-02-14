@@ -50,10 +50,18 @@
 	display: flex;
 }
 
-.table tr {
-	transition: 1s ease-out;
+.table {
+	tbody:empty::after {
+		content: 'No entries found.';
+		display: table-cell;
+		padding: 0.5em 0.75em;
+	}
 
-	td, th {
+	tr {
 		transition: 1s ease-out;
+
+		td, th {
+			transition: 1s ease-out;
+		}
 	}
 }

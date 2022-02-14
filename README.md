@@ -62,11 +62,10 @@ alerting.
 * Show expected state, add and update independent of diff
 * Show (list of) scan results, prune obsolete
 
-#### Planned
+#### TODO
 
-* Compare scan(s) to current state (backend currently compares to expected state)/each other
 * Show date-time of last successful import
-* Filter tables
+* Compare scan(s) to current state (backend currently compares to expected state)/each other
 
 #### Backlog
 

@@ -36,7 +36,7 @@ export default class Dashboard {
 		const filter = document.getElementById('filter');
 
 		this.filter = parseFilter(filter.value);
-		this.filterNeedsUpdate = false;
+		this.filterNeedsUpdate = true;
 
 		filter.addEventListener('input', event => {
 			this.filter = parseFilter(event.target.value);

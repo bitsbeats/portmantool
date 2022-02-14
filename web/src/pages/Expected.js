@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {parseFilter} from '../filter';
+import {matchFilter, parseFilter} from '../filter';
 
 const KEYS_EXPECTED = [
 	'address',
@@ -28,6 +28,7 @@ export default class Expected {
 		this.api = api;
 		this.rows = [];
 		this.filter = parseFilter(document.getElementById('filter').value);
+		this.filterNeedsUpdate = true;
 
 		this.load();
 	}
@@ -35,6 +36,7 @@ export default class Expected {
 	async load() {
 		document.getElementById('filter').addEventListener('input', event => {
 			this.filter = parseFilter(event.target.value);
+			this.filterNeedsUpdate = true;
 		});
 
 		const target = document.getElementById('target');
@@ -81,6 +83,8 @@ export default class Expected {
 
 			if (row === undefined) {
 				row = document.createElement('tr');
+
+				this.rows.splice(0, 0, row);
 
 				inputs.after(row);
 			}
@@ -172,6 +176,8 @@ export default class Expected {
 		}
 
 		target.replaceChildren(inputs, ...this.rows);
+
+		this.update();
 	}
 
 	createInputCell(id, type, range, placeholder) {
@@ -215,5 +221,28 @@ export default class Expected {
 		}
 
 		return td;
+	}
+
+	update() {
+		if (this.filterNeedsUpdate) {
+			for (const row of this.rows) {
+				const [address, port, protocol, expected] = row.children;
+				if (!matchFilter(this.filter, {
+					address: address.innerText,
+					port: port.innerText,
+					protocol: protocol.innerText,
+					state: expected.innerText,
+					expected: expected.innerText,
+				})) {
+					row.classList.add('is-hidden');
+				} else {
+					row.classList.remove('is-hidden');
+				}
+			}
+
+			this.filterNeedsUpdate = false;
+		}
+
+		setTimeout(() => this.update(), 1000);
 	}
 }

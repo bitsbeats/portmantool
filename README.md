@@ -53,7 +53,7 @@ alerting.
 
 ##### Labels
 
-* host (e.g. "10.23.42.127", "host42.bitsbeats.io")
+* host (e.g. "10.23.42.127", "2001:db8::2342", ~~"host42.bitsbeats.io"~~)
 * protocol (e.g. "tcp", "udp")
 * state (e.g. "open", "closed")
 

@@ -65,7 +65,6 @@ alerting.
 
 #### TODO
 
-* Show date-time of last successful import
 * Compare scan(s) to current state (backend currently compares to expected state)/each other
 
 #### Backlog

@@ -51,6 +51,9 @@ export default class Dashboard {
 	async update() {
 		if (this.nextUpdate === 0) {
 			try {
+				const info = await this.api.get('info');
+				document.getElementById('lastSuccessfulImport').innerText = formatDateTime(info['last_successful_import']*1000);
+
 				const diff = await this.api.get('diff');
 
 				const focusedInput = document.activeElement;

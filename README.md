@@ -33,6 +33,7 @@ alerting.
 | /expected                      | GET    | Get expected state                                                                                                 |
 | /expected                      | PATCH  | Update expected state                                                                                              |
 | /hello                         | *      | hello                                                                                                              |
+| /info                          | GET    | Get server info (currently only timestamp of last successful import)                                               |
 | /run[/{id}]                    | POST   | **(NYI)** Run scanner {id} or, in case {id} is not given, all scanners immediately                                 |
 | /scans                         | GET    | Get list of scan timestamps                                                                                        |
 | /scans[/{keep}]                | DELETE | Delete entries that do not contribute to the current state and, optionally, are older than {keep} (UNIX timestamp) |

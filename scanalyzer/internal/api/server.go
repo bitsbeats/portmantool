@@ -28,6 +28,7 @@ import (
 
 	"github.com/bitsbeats/portmantool/scanalyzer/internal/database"
 	"github.com/bitsbeats/portmantool/scanalyzer/internal/importer"
+	"github.com/bitsbeats/portmantool/scanalyzer/internal/metrics"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"gorm.io/gorm"
@@ -48,6 +49,7 @@ func (server Server) ListenAndServe(listen string, ctx context.Context, wg *sync
 	mux.HandleFunc("/diff/", server.diffTwo)
 	mux.HandleFunc("/expected", server.expected)
 	mux.HandleFunc("/hello", server.hello)
+	mux.HandleFunc("/info", server.info)
 	mux.HandleFunc("/run", server.run)
 	mux.HandleFunc("/run/", server.run)
 	mux.HandleFunc("/scans", server.scans)
@@ -195,6 +197,25 @@ func (server Server) expected(w http.ResponseWriter, r *http.Request) {
 
 func (server Server) hello(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "hello\n")
+}
+
+func (server Server) info(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		lastImport, err := metrics.GetGaugeValue(metrics.LastImport)
+		if err != nil {
+			serverError(w, r, err)
+			return
+		}
+
+		info := map[string]interface{}{
+			"last_successful_import": lastImport,
+		}
+
+		toJSON(w, r, info)
+	default:
+		w.WriteHeader(405)
+	}
 }
 
 func (server Server) run(w http.ResponseWriter, r *http.Request) {

@@ -17,6 +17,7 @@ package metrics
 import (
 	"github.com/bitsbeats/portmantool/scanalyzer/internal/database"
 	"github.com/prometheus/client_golang/prometheus"
+	dto "github.com/prometheus/client_model/go"
 
 	"gorm.io/gorm"
 )
@@ -48,6 +49,15 @@ var (
 		[]string{"host", "protocol"},
 	)
 )
+
+func GetGaugeValue(gauge prometheus.Gauge) (float64, error) {
+	metric, err := getMetric(gauge)
+	if err != nil {
+		return 0, err
+	}
+
+	return metric.Gauge.GetValue(), nil
+}
 
 func RegisterMetrics() error {
 	collectors := []prometheus.Collector{FailedImports, LastImport, Ports, RoguePorts}
@@ -84,4 +94,10 @@ func UpdateFromDatabase(db *gorm.DB) error {
 	}
 
 	return nil
+}
+
+func getMetric(metric prometheus.Metric) (m dto.Metric, err error) {
+	m = dto.Metric{}
+	err = metric.Write(&m)
+	return m, err
 }

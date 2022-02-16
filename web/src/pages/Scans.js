@@ -22,10 +22,25 @@ export default class Scans {
 		this.scan1 = null;
 		this.scan2 = null;
 
+		this.columnNames = [];
+
 		this.load();
 	}
 
 	async load() {
+		const createTh = text => {
+			const th = document.createElement('th');
+			th.append(document.createTextNode(text));
+			return th;
+		};
+
+		const [thAddress, thPort, thProtocol, thState] = document.getElementById('columnNames').children;
+		const [thStateA, thStateB, thPreviousState, thCurrentState, thLastScan] = [createTh('State A'), createTh('State B'), createTh('Previous state'), createTh('Current state'), createTh('Last scan')];
+
+		this.columnNames.push([thAddress, thPort, thProtocol, thState]);
+		this.columnNames.push([thAddress, thPort, thProtocol, thStateA, thStateB]);
+		this.columnNames.push([thAddress, thPort, thProtocol, thPreviousState, thCurrentState, thLastScan]);
+
 		await this.update();
 
 		const keep = document.getElementById('keep');
@@ -62,29 +77,54 @@ export default class Scans {
 	}
 
 	async show(scan1Changed, scan2Changed) {
-		if (!scan1Changed) { // TODO
+		if (!scan1Changed && (this.scan1 === null || !scan2Changed)) {
 			return;
 		}
 
-		const result = [];
-
 		if (this.scan1 !== null) {
-			try {
-				const scan = await this.api.get(`scan/${this.scan1}`);
-
-				result.push(...scan);
-			} catch (error) {
-				console.log(error);
-				return;
-			}
+			document.querySelectorAll('input[name=scan2]:disabled').forEach(e => {
+				e.disabled = false;
+			});
 		}
 
-		renderTbody(document.getElementById('result'), result, [
+		const result = document.getElementById('result');
+		result.replaceChildren();
+
+		const keys = [
 			'address',
 			'port',
 			'protocol',
 			'state',
-		]);
+		];
+		let endpoint = this.scan1 !== null ? `scan/${this.scan1}` : '';
+
+		const columnNames = document.getElementById('columnNames');
+		if (this.scan1 !== null && this.scan2 !== null && this.scan1 === this.scan2) {
+			keys.splice(keys.length-1, 1, 'state_a', 'state_b', 'scan_b');
+			columnNames.replaceChildren(...this.columnNames[2]);
+
+			endpoint = `diff/${this.scan1}`;
+		} else if (this.scan1 !== null && this.scan2 !== null) {
+			keys.splice(keys.length-1, 1, 'state_a', 'state_b');
+			columnNames.replaceChildren(...this.columnNames[1]);
+
+			endpoint = `diff/${this.scan1}/${this.scan2}`;
+		} else {
+			columnNames.replaceChildren(...this.columnNames[0]);
+		}
+
+		if (endpoint === '') {
+			return;
+		}
+
+		try {
+			const response = await this.api.get(endpoint);
+
+			renderTbody(result, response, keys);
+		} catch (error) {
+			console.log(error);
+			return;
+		}
 	}
 
 	createEntry(id) {
@@ -113,7 +153,7 @@ export default class Scans {
 		scan2.classList.add('radio');
 
 		const scan2Input = document.createElement('input');
-		scan2Input.disabled = true; // TODO
+		scan2Input.disabled = true;
 		scan2Input.name = 'scan2';
 		scan2Input.type = 'radio';
 		scan2Input.value = id;

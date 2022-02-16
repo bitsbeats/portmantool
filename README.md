@@ -62,11 +62,11 @@ alerting.
 * Show diff between expected and current state, updated every 5 seconds
 * Show expected state, add and update independent of diff
 * Show (list of) scan results, prune obsolete
+  * Compare scan(s) to current state/each other
 
 #### Backlog
 
-* Edit expected state
-  * Delete (needs implementation in backend)
+* Delete expected state (needs implementation in backend)
 
 ## Database
 

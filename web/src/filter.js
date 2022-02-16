@@ -84,7 +84,18 @@ export function matchFilter(filter, object) {
 						}
 					case 'port':
 						// support ranges
-						//break;
+						const range = value.split('-', 2);
+						if (range.length === 2) {
+							let [min, max] = range;
+							min = Math.max(0, Number.parseInt(min));
+							max = Math.min(65535, max === '' ? 65535 : Number.parseInt(max));
+
+							const n = Number.parseInt(object[key]);
+							const inRange = n >= min && n <= max;
+							matched = negated ? !inRange : inRange;
+
+							break;
+						}
 					default:
 						matched = negated ? object[key] !== value : object[key] === value;
 				}

@@ -56,9 +56,9 @@ func DiffExpected(db *gorm.DB) (diff []Diff, err error) {
 	return diff, nil
 }
 
-func DiffOne(db *gorm.DB, id time.Time) (diff []Diff, err error) {
+func DiffOne(db *gorm.DB, id time.Time) (diff []DiffAB, err error) {
 	state := db.Model(&ActualState{}).Where(&ActualState{ScanID: id})
-	err = db.Table("expected_states a").Select("address, port, protocol, a.state expected_state, b.state actual_state, scan_id, comment").Joins("FULL JOIN (?) b USING (address, port, protocol) WHERE a.state IS DISTINCT FROM b.state", state).Scan(&diff).Error
+	err = db.Table("(?) a", state).Select("address, port, protocol, a.state state_a, b.state state_b, a.scan_id scan_a, b.scan_id scan_b").Joins("LEFT JOIN (?) b USING (address, port, protocol) WHERE a.state IS DISTINCT FROM b.state", currentState(db)).Scan(&diff).Error
 	if err != nil {
 		return nil, err
 	}

@@ -29,7 +29,7 @@ alerting.
 | Path (excl. /v1)               | Method | Description                                                                                                        |
 | ------------------------------ | ------ | ------------------------------------------------------------------------------------------------------------------ |
 | /diff                          | GET    | Compute difference between current and expected state                                                              |
-| /diff/{id1}[/{id2}]            | GET    | Compute difference between scans {id1} and {id2}, if it is given, or the expected state, otherwise                 |
+| /diff/{id1}[/{id2}]            | GET    | Compute difference between scans {id1} and {id2}, if it is given, or the current state, otherwise                  |
 | /expected                      | GET    | Get expected state                                                                                                 |
 | /expected                      | PATCH  | Update expected state                                                                                              |
 | /hello                         | *      | hello                                                                                                              |
@@ -62,10 +62,6 @@ alerting.
 * Show diff between expected and current state, updated every 5 seconds
 * Show expected state, add and update independent of diff
 * Show (list of) scan results, prune obsolete
-
-#### TODO
-
-* Compare scan(s) to current state (backend currently compares to expected state)/each other
 
 #### Backlog
 

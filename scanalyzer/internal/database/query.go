@@ -39,6 +39,8 @@ type (
 )
 
 func CurrentState(db *gorm.DB) (state []ActualState, err error) {
+	state = make([]ActualState, 0)
+
 	err = currentState(db).Scan(&state).Error
 	if err != nil {
 		return nil, err
@@ -48,6 +50,8 @@ func CurrentState(db *gorm.DB) (state []ActualState, err error) {
 }
 
 func DiffExpected(db *gorm.DB) (diff []Diff, err error) {
+	diff = make([]Diff, 0)
+
 	err = db.Table("expected_states a").Select("address, port, protocol, a.state expected_state, b.state actual_state, scan_id, comment").Joins("FULL JOIN (?) b USING (address, port, protocol) WHERE a.state IS DISTINCT FROM b.state", currentState(db)).Scan(&diff).Error
 	if err != nil {
 		return nil, err
@@ -57,6 +61,8 @@ func DiffExpected(db *gorm.DB) (diff []Diff, err error) {
 }
 
 func DiffOne(db *gorm.DB, id time.Time) (diff []DiffAB, err error) {
+	diff = make([]DiffAB, 0)
+
 	state := db.Model(&ActualState{}).Where(&ActualState{ScanID: id})
 	err = db.Table("(?) a", state).Select("address, port, protocol, a.state state_a, b.state state_b, a.scan_id scan_a, b.scan_id scan_b").Joins("LEFT JOIN (?) b USING (address, port, protocol) WHERE a.state IS DISTINCT FROM b.state", currentState(db)).Scan(&diff).Error
 	if err != nil {
@@ -67,6 +73,8 @@ func DiffOne(db *gorm.DB, id time.Time) (diff []DiffAB, err error) {
 }
 
 func DiffTwo(db *gorm.DB, id1, id2 time.Time) (diff []DiffAB, err error) {
+	diff = make([]DiffAB, 0)
+
 	state1 := db.Model(&ActualState{}).Where(&ActualState{ScanID: id1})
 	state2 := db.Model(&ActualState{}).Where(&ActualState{ScanID: id2})
 	err = db.Table("(?) a", state1).Select("address, port, protocol, a.state state_a, b.state state_b, a.scan_id scan_a, b.scan_id scan_b").Joins("FULL JOIN (?) b USING (address, port, protocol) WHERE a.state IS DISTINCT FROM b.state", state2).Scan(&diff).Error
@@ -78,6 +86,8 @@ func DiffTwo(db *gorm.DB, id1, id2 time.Time) (diff []DiffAB, err error) {
 }
 
 func Expected(db *gorm.DB) (state []ExpectedState, err error) {
+	state = make([]ExpectedState, 0)
+
 	err = db.Find(&state).Error
 	if err != nil {
 		return nil, err
@@ -102,6 +112,8 @@ func Prune(db *gorm.DB, keep time.Time) error {
 }
 
 func Scans(db *gorm.DB) (scans []Scan, err error) {
+	scans = make([]Scan, 0)
+
 	err = db.Find(&scans).Error
 	if err != nil {
 		return nil, err
@@ -111,6 +123,8 @@ func Scans(db *gorm.DB) (scans []Scan, err error) {
 }
 
 func StateAt(db *gorm.DB, id time.Time) (state []ActualState, err error) {
+	state = make([]ActualState, 0)
+
 	err = db.Where(&ActualState{ScanID: id}).Find(&state, id).Error
 	if err != nil {
 		return nil, err

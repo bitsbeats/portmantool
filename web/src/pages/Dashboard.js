@@ -14,6 +14,7 @@
 
 import {matchFilter, parseFilter} from '../filter';
 import {formatDateTime} from '../helpers';
+import {showError} from '../notification';
 
 const KEYS_DIFF = [
 	'address',
@@ -89,6 +90,7 @@ export default class Dashboard {
 								tr.remove();
 							} catch (error) {
 								console.log(error);
+								showError(error);
 							}
 						});
 
@@ -134,6 +136,7 @@ export default class Dashboard {
 				focusedInput.focus();
 			} catch (error) {
 				console.log(error);
+				showError(error);
 			}
 
 			this.nextUpdate = this.interval;

@@ -50,6 +50,10 @@
 	display: flex;
 }
 
+.notification:empty {
+	display: none;
+}
+
 .table {
 	tbody:empty::after {
 		content: 'No entries found.';

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import {formatDateTime, renderTbody} from '../helpers';
+import {showError} from '../notification';
 
 export default class Scans {
 	constructor(api) {
@@ -56,6 +57,7 @@ export default class Scans {
 				await this.update();
 			} catch (error) {
 				console.log(error);
+				showError(error);
 			}
 
 			window.location.hash = '';
@@ -73,6 +75,7 @@ export default class Scans {
 			document.getElementById('scans').replaceChildren(...scans.map(scan => this.createEntry(scan.id)));
 		} catch (error) {
 			console.log(error);
+			showError(error);
 		}
 	}
 
@@ -123,6 +126,7 @@ export default class Scans {
 			renderTbody(result, response, keys);
 		} catch (error) {
 			console.log(error);
+			showError(error);
 			return;
 		}
 	}

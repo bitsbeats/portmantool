@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import {matchFilter, parseFilter} from '../filter';
+import {showError} from '../notification';
 
 const KEYS_EXPECTED = [
 	'address',
@@ -73,6 +74,7 @@ export default class Expected {
 				await this.api.update([data]);
 			} catch (error) {
 				console.log(error);
+				showError(error);
 				return;
 			}
 
@@ -173,6 +175,7 @@ export default class Expected {
 			});
 		} catch (error) {
 			console.log(error);
+			showError(error);
 		}
 
 		target.replaceChildren(inputs, ...this.rows);

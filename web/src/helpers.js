@@ -21,7 +21,7 @@ export function formatDateTime(date) {
 	const j = 'hh:mm:ss'.length;
 
 	const str = date.toISOString();
-	return `${str.substring(0, i)} ${str.substring(i+1, i+j+1)}`;
+	return `${str.substring(0, i)} ${str.substring(i+1, i+j+1)} UTC`;
 }
 
 export function renderTbody(elem, data, keys) {

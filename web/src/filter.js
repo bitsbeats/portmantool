@@ -20,7 +20,7 @@ const INET_BITS = {
 function parseInet(address) {
 	const octets = address.split('.').map(n => Number.parseInt(n));
 	if (octets.length === 4 && octets.every(n => n >= 0 && n < 256)) {
-		return { version: 4, bits: BigInt(octets.reduce((r, s) => r << 8 | s)) };
+		return { version: 4, bits: octets.map(n => BigInt(n)).reduce((r, s) => r << 8n | s) };
 	}
 
 	const hextets = address.split(':').map(n => n === '' ? n : Number.parseInt(n, 16));

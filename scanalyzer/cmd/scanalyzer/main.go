@@ -39,7 +39,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = metrics.UpdateFromDatabase(db)
+	err = metrics.InitFromDatabase(db)
 	if err != nil {
 		log.Fatal(err)
 	}

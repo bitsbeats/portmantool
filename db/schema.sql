@@ -24,3 +24,8 @@ CREATE TABLE `expected_states` (
 CREATE TABLE `scans` (
 	`id`		timestamptz	PRIMARY KEY,
 );
+
+CREATE TABLE `info` (
+	`key`		text		PRIMARY KEY,
+	`value` 	text,
+);

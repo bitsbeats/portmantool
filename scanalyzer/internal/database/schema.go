@@ -38,3 +38,12 @@ type Scan struct {
 	ID	time.Time
 	Ports	[]ActualState	`gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
+
+type Info struct {
+	Key	string	`gorm:"primaryKey"`
+	Value	string
+}
+
+func (Info) TableName() string {
+	return "info"
+}

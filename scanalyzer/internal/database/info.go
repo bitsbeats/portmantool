@@ -15,23 +15,43 @@
 package database
 
 import (
-	"fmt"
-
 	"gorm.io/gorm"
-	"gorm.io/driver/postgres"
+	"gorm.io/gorm/clause"
 )
 
-func Connect(host, user, password, name string) (*gorm.DB, error) {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s", host, user, password, name)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+const (
+	FailedImports = "failed_imports"
+	LastImport = "last_successful_import"
+)
+
+func Retrieve(db *gorm.DB, keys ...string) (info map[string]string, err error) {
+	result := make([]Info, 0)
+
+	err = db.Where("key IN ?", keys).Find(&result).Error
 	if err != nil {
 		return nil, err
 	}
 
-	err = db.AutoMigrate(&Scan{}, &ActualState{}, &ExpectedState{}, &Info{})
-	if err != nil {
-		return nil, err
+	info = make(map[string]string)
+
+	for _, i := range result {
+		info[i.Key] = i.Value
 	}
 
-	return db, nil
+	return info, nil
+}
+
+func Persist(db *gorm.DB, info map[string]string) error {
+	pairs := make([]Info, 0)
+
+	for k, v := range info {
+		pairs = append(pairs, Info{
+			Key: k,
+			Value: v,
+		})
+	}
+
+	return db.Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&pairs).Error
 }

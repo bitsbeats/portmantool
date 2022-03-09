@@ -29,7 +29,7 @@ func Import(db *gorm.DB, data []byte) error {
 	run := Run{}
 	err := xml.Unmarshal(data, &run)
 	if err != nil {
-		metrics.FailedImports.Inc()
+		fail(db)
 		return err
 	}
 
@@ -55,11 +55,16 @@ func Import(db *gorm.DB, data []byte) error {
 
 	err = db.Create(&scan).Error
 	if err != nil {
-		metrics.FailedImports.Inc()
+		fail(db)
 		return err
 	}
 
 	metrics.LastImport.SetToCurrentTime()
+
+	err = metrics.PersistToDatabase(db, database.LastImport, metrics.LastImport)
+	if err != nil {
+		log.Print(err)
+	}
 
 	err = metrics.UpdateFromDatabase(db)
 	if err != nil {
@@ -67,4 +72,13 @@ func Import(db *gorm.DB, data []byte) error {
 	}
 
 	return nil
+}
+
+func fail(db *gorm.DB) {
+	metrics.FailedImports.Inc()
+
+	err := metrics.PersistToDatabase(db, database.FailedImports, metrics.FailedImports)
+	if err != nil {
+		log.Print(err)
+	}
 }
